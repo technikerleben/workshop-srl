@@ -1,0 +1,2403 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KI-Werkzeuge für selbstreguliertes Lernen — HBG</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<style>
+:root {
+  --slate-dark:  #2C3D4C;
+  --slate-base:  #3E5668;
+  --slate-mid:   #6A8599;
+  --slate-pale:  #D0DCE6;
+  --slate-ghost: #EEF3F7;
+  --rust-dark:   #9E4E22;
+  --rust-base:   #D97A4A;
+  --rust-mid:    #EBA882;
+  --rust-pale:   #F5DDD1;
+  --rust-ghost:  #FBF0EB;
+  --sage-dark:   #4D8B3F;
+  --sage-base:   #7DBB6F;
+  --sage-mid:    #A8D49D;
+  --sage-pale:   #DDF0D8;
+  --sage-ghost:  #F0FAF0;
+  --warning:     #C17B00;
+  --warning-pale:#FFF3CC;
+  --error:       #C0392B;
+  --bg:          #F5F4F1;
+  --white:       #FFFFFF;
+  --text:        #1E2A35;
+  --text-muted:  #5A6A78;
+  --border:      #D4D0C8;
+  --shadow:      rgba(62,86,104,0.10);
+  --shadow-lg:   rgba(62,86,104,0.20);
+
+  --header-h:    64px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: -apple-system, 'Helvetica Neue', 'Segoe UI', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 3px solid var(--slate-base);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ════════════════════════════════════════════════════════
+   HEADER-BAR (fixed top)
+   ════════════════════════════════════════════════════════ */
+.headbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--header-h);
+  background: var(--slate-dark);
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  gap: 18px;
+  z-index: 100;
+  box-shadow: 0 2px 12px var(--shadow-lg);
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.brand__main { font-size: 17px; }
+.brand__sub  { font-size: 12px; color: var(--rust-mid); letter-spacing: 0.06em; text-transform: uppercase; }
+
+.phase-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  padding: 0 12px;
+}
+.phase-label {
+  font-size: 11px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--slate-pale);
+  font-weight: 600;
+}
+.phase-name {
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.timers {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.timer-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255,255,255,0.10);
+  border-radius: 10px;
+  padding: 4px 12px;
+  min-width: 76px;
+}
+.timer-pill__label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: var(--slate-pale);
+  font-weight: 600;
+}
+.timer-pill__value {
+  font-size: 17px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: white;
+  line-height: 1.1;
+}
+.timer-pill.warn .timer-pill__value { color: #FFD08A; }
+.timer-pill.over .timer-pill__value { color: #FFB4AC; }
+
+.hb-btn {
+  background: rgba(255,255,255,0.10);
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 17px;
+  transition: background 0.15s;
+  font-family: inherit;
+}
+.hb-btn:hover { background: rgba(255,255,255,0.18); }
+.hb-btn:active { background: rgba(255,255,255,0.05); }
+.hb-btn.active { background: var(--rust-base); }
+
+.hb-group {
+  display: flex;
+  gap: 4px;
+  background: rgba(0,0,0,0.20);
+  padding: 3px;
+  border-radius: 12px;
+}
+.hb-group .hb-btn {
+  width: 36px;
+  height: 34px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* ════════════════════════════════════════════════════════
+   SLIDES
+   ════════════════════════════════════════════════════════ */
+.deck {
+  margin-top: var(--header-h);
+}
+section.slide {
+  min-height: calc(100vh - var(--header-h));
+  padding: 48px 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  scroll-margin-top: var(--header-h);
+}
+.slide-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.slide-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--rust-dark);
+  margin-bottom: 16px;
+}
+.slide-eyebrow::before {
+  content: '';
+  width: 28px;
+  height: 2px;
+  background: var(--rust-base);
+}
+
+h1.slide-title {
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--slate-dark);
+  letter-spacing: -0.01em;
+  margin-bottom: 18px;
+}
+h2.slide-title {
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--slate-dark);
+  letter-spacing: -0.01em;
+  margin-bottom: 14px;
+}
+h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--slate-dark);
+  margin-bottom: 10px;
+}
+p.lead {
+  font-size: 21px;
+  line-height: 1.45;
+  color: var(--text);
+  margin-bottom: 16px;
+  max-width: 880px;
+}
+p.muted {
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+/* ════════════════════════════════════════════════════════
+   FARBIGE SLIDES (Akzentwechsel)
+   ════════════════════════════════════════════════════════ */
+.slide--slate-hero {
+  background: linear-gradient(135deg, var(--slate-dark) 0%, var(--slate-base) 100%);
+  color: white;
+}
+.slide--slate-hero .slide-title,
+.slide--slate-hero h3 { color: white; }
+.slide--slate-hero .lead { color: rgba(255,255,255,0.92); }
+.slide--slate-hero .slide-eyebrow { color: var(--rust-mid); }
+.slide--slate-hero .slide-eyebrow::before { background: var(--rust-mid); }
+
+.slide--rust-tinted { background: var(--rust-ghost); }
+.slide--sage-tinted { background: var(--sage-ghost); }
+.slide--slate-tinted { background: var(--slate-ghost); }
+
+/* ════════════════════════════════════════════════════════
+   KARTEN, GRIDS, BADGES
+   ════════════════════════════════════════════════════════ */
+.card {
+  background: var(--white);
+  border-radius: 14px;
+  padding: 22px 26px;
+  box-shadow: 0 2px 10px var(--shadow);
+  border: 1px solid var(--border);
+}
+.card--accent-rust { border-left: 5px solid var(--rust-base); }
+.card--accent-sage { border-left: 5px solid var(--sage-base); }
+.card--accent-slate { border-left: 5px solid var(--slate-base); }
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: 16px;
+}
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 16px;
+  align-items: start;
+}
+.grid-qr {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 28px;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .grid-3 { grid-template-columns: 1fr; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .grid-qr { grid-template-columns: 1fr; }
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  line-height: 1.4;
+}
+.badge--slate   { background: var(--slate-base);  color: white; }
+.badge--rust    { background: var(--rust-dark);   color: white; }
+.badge--sage    { background: var(--sage-dark);   color: white; }
+.badge--outline { background: transparent; color: var(--slate-base); border: 1.5px solid var(--slate-base); }
+
+.pill-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Phasen-Übersicht (Sektion 4) */
+.phase-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+}
+.phase-card {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 16px 14px;
+  border-top: 4px solid var(--slate-base);
+  box-shadow: 0 1px 4px var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  font-size: 14px;
+}
+.phase-card--p1 { border-top-color: var(--slate-base); }
+.phase-card--p2 { border-top-color: var(--rust-base); }
+.phase-card--p3 { border-top-color: var(--sage-base); }
+.phase-card--p4 { border-top-color: var(--slate-mid); }
+.phase-card--p5 { border-top-color: var(--rust-dark); }
+.phase-card__num {
+  font-size: 11px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+.phase-card__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--slate-dark);
+  line-height: 1.25;
+}
+.phase-card__time {
+  margin-top: auto;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .phase-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Drei-Säulen-Hero (Sektion 4 alternativ) */
+.pillars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 24px;
+}
+.pillar {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 24px;
+  border-top: 6px solid var(--rust-base);
+  box-shadow: 0 4px 14px var(--shadow);
+}
+.pillar:nth-child(2) { border-top-color: var(--sage-base); }
+.pillar:nth-child(3) { border-top-color: var(--slate-base); }
+.pillar__num {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rust-dark);
+  font-weight: 700;
+}
+.pillar:nth-child(2) .pillar__num { color: var(--sage-dark); }
+.pillar:nth-child(3) .pillar__num { color: var(--slate-base); }
+.pillar__title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--slate-dark);
+  margin: 6px 0 10px;
+  line-height: 1.2;
+}
+.pillar__desc {
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .pillars { grid-template-columns: 1fr; }
+}
+
+/* Prompt-Karten */
+.prompt-card {
+  background: var(--white);
+  border: 2px solid var(--rust-base);
+  border-radius: 14px;
+  padding: 24px 28px;
+  font-family: 'SFMono-Regular', 'Menlo', 'Consolas', monospace;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--slate-dark);
+  position: relative;
+}
+.prompt-card__tag {
+  position: absolute;
+  top: -12px;
+  left: 22px;
+  background: var(--rust-base);
+  color: white;
+  font-family: -apple-system, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+.prompt-card strong { color: var(--rust-dark); font-weight: 700; }
+.prompt-card .ph { color: var(--slate-mid); font-style: italic; }
+
+/* Sage-variant für System-Prompt */
+.prompt-card--sage { border-color: var(--sage-base); }
+.prompt-card--sage .prompt-card__tag { background: var(--sage-dark); }
+.prompt-card--sage strong { color: var(--sage-dark); }
+
+/* Beispiel-Tools */
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+.tool-card {
+  background: var(--white);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 2px 10px var(--shadow);
+  border: 1px solid var(--border);
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.tool-card__icon {
+  font-size: 38px;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--rust-ghost);
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+.tool-card__body h4 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--slate-dark);
+  margin-bottom: 2px;
+}
+.tool-card__body p {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+@media (max-width: 900px) {
+  .tool-grid { grid-template-columns: 1fr; }
+}
+
+/* QR Block */
+.qr-block {
+  background: var(--white);
+  border-radius: 14px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  text-align: center;
+}
+.qr-canvas {
+  width: 240px;
+  height: 240px;
+  background: white;
+  border-radius: 8px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+.qr-canvas img,
+.qr-canvas svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.qr-canvas--empty {
+  background: var(--slate-ghost);
+  border: 2px dashed var(--slate-mid);
+  color: var(--text-muted);
+  font-size: 13px;
+  padding: 20px;
+  text-align: center;
+}
+.qr-label {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+  word-break: break-all;
+}
+.qr-set-link {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--rust-dark);
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: inherit;
+}
+
+/* Live-QR-Eingabe (Sektion 10) */
+.live-qr-form {
+  background: var(--white);
+  border-radius: 14px;
+  padding: 22px;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 10px var(--shadow);
+}
+.live-qr-form label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.live-qr-form input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  font-size: 16px;
+  font-family: inherit;
+  background: var(--white);
+  color: var(--text);
+  margin-bottom: 14px;
+}
+.live-qr-form input:focus {
+  outline: none;
+  border-color: var(--slate-base);
+  box-shadow: 0 0 0 3px var(--slate-pale);
+}
+
+.btn {
+  background: var(--rust-dark);
+  color: white;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+  min-height: 44px;
+}
+.btn:hover { background: #B55E2A; }
+.btn--ghost {
+  background: transparent;
+  color: var(--slate-base);
+  border: 2px solid var(--slate-base);
+}
+.btn--ghost:hover { background: var(--slate-ghost); }
+.btn--sage {
+  background: var(--sage-dark);
+}
+.btn--sage:hover { background: #3D7032; }
+
+/* Konzeptionsfelder Säule 2 */
+.concept-form {
+  background: var(--white);
+  border-radius: 14px;
+  padding: 22px;
+  border: 1px solid var(--border);
+}
+.concept-form .field {
+  margin-bottom: 14px;
+}
+.concept-form .field label {
+  display: block;
+  font-size: 13px;
+  color: var(--slate-base);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.concept-form input,
+.concept-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 15px;
+  resize: vertical;
+}
+.concept-form textarea { min-height: 76px; }
+
+/* Reflexions-Karteikarte (Sektion 12) */
+.reflex-card {
+  background: var(--white);
+  border-radius: 14px;
+  border-left: 5px solid var(--sage-base);
+  padding: 24px;
+  box-shadow: 0 2px 10px var(--shadow);
+  max-width: 720px;
+  margin: 0 auto;
+}
+.reflex-card .field {
+  margin-bottom: 14px;
+}
+.reflex-card label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--sage-dark);
+  margin-bottom: 6px;
+}
+.reflex-card textarea,
+.reflex-card input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 15px;
+  background: var(--sage-ghost);
+}
+.reflex-card textarea { min-height: 64px; resize: vertical; }
+
+/* Materialpool Tabelle */
+.qr-pool {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 14px;
+}
+.qr-pool__item {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+.qr-pool__qr {
+  width: 130px;
+  height: 130px;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+}
+.qr-pool__qr img,
+.qr-pool__qr svg { width: 100%; height: 100%; }
+.qr-pool__qr--empty {
+  background: var(--slate-ghost);
+  border: 2px dashed var(--slate-mid);
+  color: var(--text-muted);
+  font-size: 11px;
+}
+.qr-pool__label {
+  font-size: 12px;
+  color: var(--slate-dark);
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .qr-pool { grid-template-columns: 1fr; }
+}
+
+/* Hinweis / Tipp-Box */
+.hint {
+  background: var(--rust-ghost);
+  border-left: 4px solid var(--rust-base);
+  border-radius: 0 10px 10px 0;
+  padding: 14px 18px;
+  font-size: 15px;
+  color: var(--slate-dark);
+  margin: 16px 0;
+}
+.hint--sage { background: var(--sage-ghost); border-left-color: var(--sage-base); }
+.hint--slate { background: var(--slate-ghost); border-left-color: var(--slate-base); }
+
+/* Aufzählung */
+ul.clean {
+  list-style: none;
+  padding: 0;
+}
+ul.clean li {
+  padding: 6px 0 6px 24px;
+  position: relative;
+  font-size: 16px;
+  line-height: 1.5;
+}
+ul.clean li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--rust-base);
+  font-weight: 700;
+}
+.slide--slate-hero ul.clean li::before { color: var(--rust-mid); }
+
+/* ════════════════════════════════════════════════════════
+   BILD-SLOTS (Platzhalter — austauschbar)
+   ════════════════════════════════════════════════════════
+   Verwendung:
+   1) Suche den gewünschten <div class="image-slot ..."> Block
+   2) Ersetze den darin enthaltenen <div class="image-slot__placeholder">…</div>
+      durch <img class="image-slot__img" src="dein-bild.jpg" alt="Beschreibung">
+   3) Das Bild füllt den Container automatisch, Aspect-Ratio bleibt erhalten
+   4) Tipp: JPEG bei Fotos (70-80% Qualität), PNG bei Screenshots
+   ════════════════════════════════════════════════════════ */
+.image-slot {
+  background: var(--slate-ghost);
+  /* border: 2px dashed var(--slate-mid); */
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  padding: 16px;
+}
+.image-slot--16x9 { aspect-ratio: 16 / 9; }
+.image-slot--16x10 { aspect-ratio: 16 / 10; }
+.image-slot--4x3  { aspect-ratio: 4 / 3; }
+.image-slot--3x4  { aspect-ratio: 3 / 4; }
+.image-slot--1x1  { aspect-ratio: 1 / 1; }
+.image-slot--3x1  { aspect-ratio: 3 / 1; }
+
+.image-slot__placeholder {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  max-width: 90%;
+}
+.image-slot__icon {
+  font-size: 30px;
+  opacity: 0.35;
+  line-height: 1;
+}
+.image-slot__label {
+  font-weight: 700;
+  color: var(--slate-base);
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+.image-slot__desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  max-width: 320px;
+  line-height: 1.45;
+}
+.image-slot__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 2;
+}
+
+/* Auf Hero-Slide hellerer Platzhalter für dunklen Hintergrund */
+.slide--slate-hero .image-slot {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.35);
+}
+.slide--slate-hero .image-slot__placeholder { color: rgba(255,255,255,0.75); }
+.slide--slate-hero .image-slot__label { color: rgba(255,255,255,0.95); }
+.slide--slate-hero .image-slot__desc { color: rgba(255,255,255,0.70); }
+
+/* Tool-Card mit Screenshot (Slide 9) */
+.tool-card--with-image {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+.tool-card--with-image .image-slot {
+  border-radius: 14px 14px 0 0;
+  border: none;
+  border-bottom: 1px solid var(--border);
+}
+.tool-card--with-image .tool-card__body {
+  padding: 16px 18px 18px;
+}
+
+/* Hero-Layout mit optionalem Bild */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 36px;
+  align-items: center;
+}
+@media (max-width: 900px) {
+  .hero-grid { grid-template-columns: 1fr; }
+}
+
+/* ════════════════════════════════════════════════════════
+   NOTIZ-DRAWER
+   ════════════════════════════════════════════════════════ */
+.notes-drawer {
+  position: fixed;
+  top: var(--header-h);
+  right: -400px;
+  width: 380px;
+  max-width: 95vw;
+  bottom: 0;
+  background: var(--white);
+  box-shadow: -4px 0 24px var(--shadow-lg);
+  z-index: 90;
+  transition: right 0.28s ease;
+  display: flex;
+  flex-direction: column;
+}
+.notes-drawer.open { right: 0; }
+
+.notes-head {
+  background: var(--slate-ghost);
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.notes-head h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--slate-dark);
+}
+.notes-head__sub {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.notes-section {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.notes-section__head {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rust-dark);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.notes-section__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--slate-dark);
+  margin-bottom: 8px;
+}
+.notes-textarea {
+  width: 100%;
+  min-height: 80px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.5;
+  background: var(--bg);
+  resize: vertical;
+}
+.notes-textarea:focus {
+  outline: none;
+  border-color: var(--slate-base);
+  background: white;
+}
+
+.notes-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.notes-actions {
+  padding: 14px 18px;
+  background: var(--slate-ghost);
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
+}
+.notes-actions .btn { flex: 1; padding: 10px; font-size: 14px; }
+
+/* ════════════════════════════════════════════════════════
+   QR-SETUP-MODAL
+   ════════════════════════════════════════════════════════ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 36, 44, 0.55);
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-backdrop.open { display: flex; }
+.modal {
+  background: white;
+  border-radius: 16px;
+  max-width: 720px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 12px 48px var(--shadow-lg);
+}
+.modal-head {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-head h2 {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--slate-dark);
+}
+.modal-body {
+  padding: 18px 24px;
+  overflow-y: auto;
+}
+.modal-foot {
+  padding: 14px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--slate-ghost);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  border-radius: 0 0 16px 16px;
+}
+.url-row {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--slate-ghost);
+}
+.url-row:last-child { border-bottom: none; }
+.url-row label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--slate-dark);
+}
+.url-row input {
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+@media (max-width: 700px) {
+  .url-row { grid-template-columns: 1fr; }
+}
+
+/* ════════════════════════════════════════════════════════
+   SECTION-OVERVIEW (ESC)
+   ════════════════════════════════════════════════════════ */
+.overview {
+  position: fixed;
+  inset: var(--header-h) 0 0 0;
+  background: rgba(245,244,241,0.97);
+  backdrop-filter: blur(6px);
+  z-index: 80;
+  display: none;
+  padding: 24px;
+  overflow-y: auto;
+}
+.overview.open { display: block; }
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.ov-tile {
+  background: white;
+  border-radius: 12px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.1s, box-shadow 0.15s;
+  font-family: inherit;
+}
+.ov-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px var(--shadow);
+}
+.ov-tile__num {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+.ov-tile__title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--slate-dark);
+  margin-top: 4px;
+  line-height: 1.3;
+}
+.ov-tile__phase {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--rust-dark);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ════════════════════════════════════════════════════════
+   PRINT
+   ════════════════════════════════════════════════════════ */
+@media print {
+  body * { visibility: hidden; }
+  .print-container, .print-container * { visibility: visible; }
+  .print-container {
+    display: block !important;
+    position: absolute;
+    left: 0; top: 0;
+    width: 100%;
+    padding: 24px;
+    background: white;
+  }
+  .print-container h1 {
+    font-size: 22px;
+    color: #2C3D4C;
+    margin-bottom: 6px;
+  }
+  .print-container .print-meta {
+    font-size: 13px;
+    color: #5A6A78;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #D4D0C8;
+    padding-bottom: 14px;
+  }
+  .print-section {
+    margin-bottom: 18px;
+    page-break-inside: avoid;
+  }
+  .print-section h2 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #9E4E22;
+    margin-bottom: 4px;
+  }
+  .print-section .print-st {
+    font-size: 14px;
+    font-weight: 700;
+    color: #2C3D4C;
+    margin-bottom: 6px;
+  }
+  .print-section .print-body {
+    font-size: 14px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    color: #1E2A35;
+  }
+  .print-section .print-empty {
+    font-style: italic;
+    color: #999;
+    font-size: 13px;
+  }
+}
+
+.print-container { display: none; }
+
+/* ════════════════════════════════════════════════════════
+   META-HINWEIS-FLAG (Sektion 2)
+   ════════════════════════════════════════════════════════ */
+.meta-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--rust-ghost);
+  color: var(--rust-dark);
+  border: 2px solid var(--rust-base);
+  padding: 14px 22px;
+  border-radius: 999px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+.meta-flag__icon {
+  width: 32px;
+  height: 32px;
+  background: var(--rust-base);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+/* Source-Modal */
+.source-pre {
+  background: var(--slate-ghost);
+  padding: 16px;
+  border-radius: 8px;
+  font-family: 'SFMono-Regular', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--slate-dark);
+  white-space: pre-wrap;
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+/* Tastatur-Hint */
+.kbd-hint {
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--slate-dark);
+  color: rgba(255,255,255,0.85);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  z-index: 70;
+  display: flex;
+  gap: 12px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.kbd-hint.show { opacity: 1; }
+.kbd-hint kbd {
+  background: rgba(255,255,255,0.18);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'SFMono-Regular', monospace;
+  font-size: 11px;
+}
+</style>
+</head>
+<body>
+
+<!-- ═════════════════════════════════════════════════════════
+     HEADER-BAR
+     ═════════════════════════════════════════════════════════ -->
+<header class="headbar" role="banner">
+  <div class="brand">
+    <span class="brand__main">HBG</span>
+    <span class="brand__sub">SRL · KI-Workshop</span>
+  </div>
+
+  <div class="phase-block">
+    <span class="phase-label" id="phaseLabel">Phase 1 / 5</span>
+    <span class="phase-name" id="phaseName">Einstieg & Anker</span>
+  </div>
+
+  <div class="timers">
+    <div class="timer-pill" id="phaseTimer" title="Phasen-Restzeit">
+      <span class="timer-pill__label">Phase</span>
+      <span class="timer-pill__value" id="phaseTimerValue">12:00</span>
+    </div>
+    <div class="timer-pill" id="totalTimer" title="Workshop-Gesamtzeit">
+      <span class="timer-pill__label">Gesamt</span>
+      <span class="timer-pill__value" id="totalTimerValue">00:00</span>
+    </div>
+  </div>
+
+  <div class="hb-group" role="group" aria-label="Phasen-Steuerung">
+    <button class="hb-btn" id="phasePrev" title="Phase zurück" aria-label="Phase zurück">⏮</button>
+    <button class="hb-btn" id="phaseToggle" title="Timer Start/Pause" aria-label="Timer Start/Pause">▶</button>
+    <button class="hb-btn" id="phaseNext" title="Phase weiter" aria-label="Phase weiter">⏭</button>
+  </div>
+
+  <div class="hb-group" role="group" aria-label="Sektionen-Steuerung">
+    <button class="hb-btn" id="sectPrev" title="Sektion zurück (←)" aria-label="Sektion zurück">‹</button>
+    <button class="hb-btn" id="sectNext" title="Sektion weiter (→)" aria-label="Sektion weiter">›</button>
+  </div>
+
+  <button class="hb-btn" id="overviewBtn" title="Übersicht (ESC)" aria-label="Übersicht">▦</button>
+  <button class="hb-btn" id="setupBtn" title="QR-URLs setzen (S)" aria-label="QR-Setup">⚙</button>
+  <button class="hb-btn" id="notesBtn" title="Notizen (N)" aria-label="Notizen">✎</button>
+</header>
+
+<!-- ═════════════════════════════════════════════════════════
+     SLIDES (14 Sektionen)
+     ═════════════════════════════════════════════════════════ -->
+<main class="deck" id="deck">
+
+<!-- ═══ SLIDE 1: TITEL ═══ -->
+<section class="slide slide--slate-hero" id="s1" data-phase="1" data-title="Titel">
+  <div class="slide-inner">
+    <div class="hero-grid">
+      <div>
+        <span class="slide-eyebrow">Pädagogischer Tag · Workshop</span>
+        <h1 class="slide-title">KI-Werkzeuge für selbstreguliertes Lernen</h1>
+        <p class="lead">SRL braucht differenziertes Material, Wahlangebote, Hilfekarten, Diagnoseimpulse — und das frisst Zeit. Heute schauen wir, wie KI dir dabei zur Seite steht. Ohne dass die pädagogische Verantwortung wandert.</p>
+        <div class="pill-list" style="margin-top: 28px;">
+          <span class="badge badge--rust">90 Minuten</span>
+          <span class="badge badge--slate">Drei Säulen</span>
+          <span class="badge badge--sage">Live entwickelt</span>
+        </div>
+      </div>
+
+      <!-- BILD-SLOT · OPTIONAL · Slide 1 (Hero)
+           Idee: SuS bei iPad-Arbeit (von hinten/anonymisiert), leerer Klassenraum
+           mit Beamer, oder KI-generiertes abstraktes Visual in Slate/Rust.
+           Eher zurückhaltend — nicht ablenkend vom Titel.
+           Wenn du kein Bild willst: einfach das ganze <div class="image-slot ..."> entfernen. -->
+      <div class="image-slot image-slot--4x3">
+       <img class="image-slot__img" src="folie1.png" alt="Schüler:innen beim Arbeiten">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 2: META-HINWEIS ═══ -->
+<section class="slide slide--rust-tinted" id="s2" data-phase="1" data-title="Diese Seite ist KI-gebaut">
+  <div class="slide-inner" style="max-width: 1080px;">
+    <div class="meta-flag">
+      <span class="meta-flag__icon">⚙</span>
+      <span>Diese Workshop-Seite wurde mit Claude gebaut.</span>
+    </div>
+    <h2 class="slide-title">Sie ist gleichzeitig euer Beispiel für Säule 3.</h2>
+    <p class="lead">Header-Timer, Notizfunktion, QR-Generator, druckbare Mitschrift — all das ist mit einem einzigen Prompt entstanden, in einer Iterationsschleife. In Phase 4 schauen wir uns an, wie das geht.</p>
+
+    <div class="grid-2" style="margin-top: 28px;">
+     
+      <!-- BILD-SLOT · Slide 2 — Original-Prompt
+           Inhalt: Screenshot eines Ausschnitts des Prompts, mit dem diese Seite
+           entstanden ist. Mono-Schrift, ggf. mit syntax-Highlighting. Wirkt
+           authentisch und macht den Meta-Twist greifbar. -->
+      <div class="image-slot image-slot--16x10">
+            <img class="image-slot__img" src="folie2.png" alt="KI-Erstellung dieser Seite">
+      </div>
+    </div>
+
+    <p class="muted" style="margin-top: 18px;">→ Du findest am Ende von Phase 4 einen Knopf <em>„Wie wurde diese Seite gebaut?"</em>.</p>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 3: LEITSATZ + EINSTIEGS-FRAGE ═══ -->
+<section class="slide" id="s3" data-phase="1" data-title="Leitsatz & Einstieg">
+  <div class="slide-inner">
+    <span class="slide-eyebrow">Phase 1 · Anker setzen</span>
+    <h2 class="slide-title" style="max-width: 900px;">SRL braucht Material, Wahlangebote, Hilfekarten — und das frisst Zeit, die wir nicht haben.</h2>
+
+    <div class="card card--accent-rust" style="margin-top: 36px;">
+      <h3 style="margin-bottom: 14px;">Frage an euch — am Whiteboard, nicht digital:</h3>
+      <p class="lead" style="font-size: 24px; color: var(--rust-dark); font-weight: 700;">Wo verlierst du im Schulalltag die meiste Zeit?</p>
+      <p class="muted" style="margin-top: 12px;">Stifte greifen, ein Stichwort drauf — wir clustern gleich gemeinsam. Wir kommen darauf in jeder Säule zurück.</p>
+    </div>
+
+    <div class="hint hint--slate" style="margin-top: 28px;">
+      <strong>Drei Kernbotschaften für den Tag:</strong>
+      <ul class="clean" style="margin-top: 8px;">
+        <li>KI ersetzt nicht die didaktische Entscheidung — sie beschleunigt den ersten Entwurf.</li>
+        <li>KI ist stark bei wiederkehrenden Strukturen (Mindest-/Regel-/Expertenstandard).</li>
+        <li>Drei Werkzeuge, drei typische SRL-Bedarfe — nicht mehr, nicht weniger.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 4: DREI SÄULEN + PROGRAMM ═══ -->
+<section class="slide slide--slate-tinted" id="s4" data-phase="1" data-title="Programm & Drei Säulen">
+  <div class="slide-inner">
+    <span class="slide-eyebrow">Programm</span>
+    <h2 class="slide-title">Drei Säulen, drei SRL-Bedarfe.</h2>
+
+    <div class="pillars">
+      <div class="pillar">
+        <div class="pillar__num">Säule 1 · 25 Min</div>
+        <div class="pillar__title">Material differenzieren</div>
+        <div class="pillar__desc">LLMs als Differenzierungs-Helfer. Mindest- / Regel- / Expertenstandard in einem Rutsch.</div>
+      </div>
+      <div class="pillar">
+        <div class="pillar__num">Säule 2 · 20 Min</div>
+        <div class="pillar__title">Telli-Lernszenario</div>
+        <div class="pillar__desc">Eine konkrete Aufgabe für die Klasse — die KI hat eine klare Rolle. Wir konzipieren eines gemeinsam.</div>
+      </div>
+      <div class="pillar">
+        <div class="pillar__num">Säule 3 · 22 Min</div>
+        <div class="pillar__title">HTML live mit KI bauen</div>
+        <div class="pillar__desc">Eine kleine interaktive Lernumgebung entsteht vor euren Augen. Aus einem Prompt eures Kollegiums.</div>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 36px;">Zeitstruktur</h3>
+    <div class="phase-grid">
+      <div class="phase-card phase-card--p1">
+        <div class="phase-card__num">Phase 1</div>
+        <div class="phase-card__title">Einstieg & Anker</div>
+        <div class="phase-card__time">12 Min</div>
+      </div>
+      <div class="phase-card phase-card--p2">
+        <div class="phase-card__num">Phase 2</div>
+        <div class="phase-card__title">Material differenzieren</div>
+        <div class="phase-card__time">25 Min</div>
+      </div>
+      <div class="phase-card phase-card--p3">
+        <div class="phase-card__num">Phase 3</div>
+        <div class="phase-card__title">Telli-Lernszenario</div>
+        <div class="phase-card__time">20 Min</div>
+      </div>
+      <div class="phase-card phase-card--p4">
+        <div class="phase-card__num">Phase 4</div>
+        <div class="phase-card__title">HTML live bauen</div>
+        <div class="phase-card__time">22 Min</div>
+      </div>
+      <div class="phase-card phase-card--p5">
+        <div class="phase-card__num">Phase 5</div>
+        <div class="phase-card__title">Sicherung</div>
+        <div class="phase-card__time">11 Min</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 5: SÄULE 1 — PROMPT-KARTE ═══ -->
+<section class="slide slide--rust-tinted" id="s5" data-phase="2" data-title="Säule 1: Prompt-Karte">
+  <div class="slide-inner">
+    <span class="slide-eyebrow">Säule 1 · Material differenzieren</span>
+    <h2 class="slide-title">Eine Aufgabe — drei Niveaustufen.</h2>
+    <p class="lead">Das Mindest-/Regel-/Expert-Raster ist euer roter Faden. KI macht das Differenzieren in Sekunden, ihr macht die didaktische Feinarbeit.</p>
+
+    <div class="grid-2" style="margin-top: 32px;">
+      <div class="prompt-card">
+        <div class="prompt-card__tag">Prompt-Vorlage</div>
+        <p><strong>Erstelle zu folgender Aufgabe drei Varianten:</strong></p>
+        <p style="margin-top: 10px;">— <strong>Mindeststandard:</strong> klare Schrittfolge, Hilfen integriert, Beispielanfang<br>
+        — <strong>Regelstandard:</strong> normaler Anspruch, ohne Vorgaben<br>
+        — <strong>Expertenstandard:</strong> offener, mit Transferaspekt</p>
+        <p style="margin-top: 14px;">Ergänze für jede Stufe eine Hilfekarte und einen knappen Erwartungshorizont.</p>
+        <p style="margin-top: 14px;"><strong>Aufgabe:</strong> <span class="ph">[hier einfügen]</span><br>
+        <strong>Klasse / Fach:</strong> <span class="ph">[hier einfügen]</span></p>
+      </div>
+
+      <div class="qr-block" data-qr-key="prompt_karte_pdf">
+        <div class="qr-canvas" data-qr-render="prompt_karte_pdf">
+          <div class="qr-canvas--empty">QR wird gesetzt sobald URL hinterlegt ist.<br><br>⚙ oben rechts → URL für „Prompt-Karte PDF" eintragen.</div>
+        </div>
+        <div class="qr-label" data-qr-label="prompt_karte_pdf">Prompt-Karte als PDF</div>
+        <button class="qr-set-link" onclick="openSetup('prompt_karte_pdf')">URL setzen / ändern</button>
+      </div>
+    </div>
+
+    <!-- BILD-SLOT · Slide 5 — Vorher/Nachher Differenzierung
+         Inhalt: Links die Original-Aufgabe (kurzer Textblock), rechts (oder darunter)
+         die drei vom LLM erzeugten Niveaustufen — als drei kompakte Spalten oder
+         als Screenshot einer KI-Antwort. Idealerweise mit einer echten Aufgabe
+         aus deinem Unterricht. Macht „drei Niveaustufen" sofort konkret. -->
+  
+  </div>
+</section>
+
+<!-- ═══ SLIDE 6: SÄULE 1 — LIVE-BEREICH ═══ -->
+<section class="slide" id="s6" data-phase="2" data-title="Säule 1: Live-Co-Prompting">
+  <div class="slide-inner">
+    <span class="slide-eyebrow">Säule 1 · Live</span>
+    <h2 class="slide-title">Jetzt arbeiten wir gemeinsam.</h2>
+    <p class="lead">Eine Aufgabe von euch, drei Niveaustufen, eine Hilfekarte, ein Erwartungshorizont. Ich tippe, ihr ruft rein.</p>
+
+    <div class="grid-2" style="margin-top: 28px;">
+      <div class="card card--accent-rust">
+        <h3>Was wir gleich tun:</h3>
+        <ul class="clean" style="margin-top: 10px;">
+          <li>Eine echte Aufgabe sammeln (3 Min)</li>
+          <li>Differenzierungs-Prompt absetzen (4 Min)</li>
+          <li>Iterieren, bis es passt (5 Min)</li>
+          <li>Hilfekarten und Erwartungshorizont generieren (3 Min)</li>
+          <li>Reflektieren: Was habt ihr beobachtet? (5 Min)</li>
+        </ul>
+      </div>
+
+      <div class="card card--accent-slate">
+        <h3>Worauf wir achten:</h3>
+        <ul class="clean" style="margin-top: 10px;">
+          <li>Sprache prüfen — passt sie zur Lerngruppe?</li>
+          <li>Inhaltliche Korrektheit — fachlich sauber?</li>
+          <li>Differenzierung — sind die Stufen wirklich unterschiedlich?</li>
+          <li>Hilfekarten — geben sie Hilfe oder die Lösung?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- BILD-SLOT · Slide 6 — Differenziertes Material in der Praxis
+         Inhalt: Foto z.B. von drei Arbeitsblättern nebeneinander auf einem Schultisch
+         (Mindest-/Regel-/Expertenstandard erkennbar), oder SuS, die an
+         unterschiedlichen Stufen arbeiten. Datenschutz beachten: SuS von hinten,
+         anonymisiert, oder nur Hände/Material zeigen. -->
+    <div class="image-slot image-slot--16x9" style="margin-top: 28px;">
+     <img class="image-slot__img" src="folie6.png" alt="drei differenzierte Arbeitsblätter">
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 7: SÄULE 2 — TELLI-LERNSZENARIO ═══ -->
+<section class="slide slide--sage-tinted" id="s7" data-phase="3" data-title="Säule 2: Telli-Lernszenario">
+  <div class="slide-inner">
+    <span class="slide-eyebrow">Säule 2 · Telli</span>
+    <h2 class="slide-title">Die KI als Teil der Aufgabe.</h2>
+    <p class="lead">Ein Lernszenario ist mehr als ein Chatbot. Es ist eine konkrete Aufgabe für die Klasse, in der die KI eine klare Rolle übernimmt — Schreib-Feedback-Partner, Sparringspartner, Lese-Detektiv. Die SuS lernen <em>durch</em> die Interaktion mit ihr, nicht <em>von</em> ihr.</p>
+
+    <div class="grid-2" style="margin-top: 32px;">
+      <div class="prompt-card prompt-card--sage">
+        <div class="prompt-card__tag">System-Prompt-Vorlage</div>
+        <p><strong>Lernszenario:</strong> <span class="ph">[Name, z.B. „Schreib-Feedback-Partner"]</span></p>
+        <p style="margin-top: 8px;"><strong>Deine Rolle:</strong> <span class="ph">[Wer bist du in der Aufgabe?]</span></p>
+        <p style="margin-top: 8px;"><strong>Aufgabe der Schüler:innen:</strong> <span class="ph">[Was tun sie konkret?]</span></p>
+        <p style="margin-top: 8px;"><strong>Was du tust:</strong> Rückfragen stellen, Hinweise geben, konkrete Beispiele aus der Schülerarbeit aufgreifen.</p>
+        <p style="margin-top: 8px;"><strong>Was du nicht tust:</strong> die Aufgabe für sie lösen, das Thema verlassen, persönliche Daten erfragen.</p>
+      </div>
+
+      <div class="qr-block" data-qr-key="telli_beispiel">
+        <div class="qr-canvas" data-qr-render="telli_beispiel">
+          <div class="qr-canvas--empty">QR wird gesetzt sobald URL hinterlegt ist.</div>
+        </div>
+        <div class="qr-label" data-qr-label="telli_beispiel">Beispiel-Lernszenario</div>
+        <button class="qr-set-link" onclick="openSetup('telli_beispiel')">URL setzen / ändern</button>
+      </div>
+    </div>
+
+    <!-- BILD-SLOTS · Slide 7 — Telli SuS-Perspektive + Konfigurations-Seite
+         Inhalt: Zwei Screenshots aus telli, deine bestehenden Lernszenarien.
+         Links: SuS-Perspektive — der laufende Chat im Lernszenario.
+         Rechts: Konfigurations-Seite — wo der System-Prompt eingetragen wird.
+         Macht den entscheidenden Unterschied zwischen „Was sehen die SuS"
+         und „Wo entscheidet sich, was die KI tut" sichtbar. -->
+    <div class="grid-2" style="margin-top: 28px;">
+      
+      <div class="image-slot image-slot--16x10">
+            <img class="image-slot__img" src="folie7.png" alt="telli-Ansichten">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 8: SÄULE 2 — MINI-KONZEPTION ═══ -->
+<section class="slide" id="s8" data-phase="3" data-title="Säule 2: Lernszenario konzipieren">
+  <div class="slide-inner">
+    <span class="slide-eyebrow">Säule 2 · Mini-Konzeption</span>
+    <h2 class="slide-title">Dein Lernszenario — in drei Sätzen.</h2>
+    <p class="lead">Murmelphase: Überlege dir mit deiner Tischnachbar:in eine konkrete Aufgabe, in der ein Telli-Lernszenario sinnvoll wäre. Skizziere kurz — auch in den Notizen rechts.</p>
+
+    <div class="grid-2" style="margin-top: 28px;">
+      <div class="concept-form">
+        <h3 style="margin-bottom: 14px;">Briefing-Vorlage</h3>
+        <div class="field">
+          <label>Aufgabe für die Schüler:innen</label>
+          <input type="text" data-note-key="telli_thema" placeholder="z.B. eigenen informierenden Text schreiben und Feedback holen">
+        </div>
+        <div class="field">
+          <label>Welche Rolle übernimmt die KI?</label>
+          <textarea data-note-key="telli_darf" placeholder="z.B. Feedback-Partner, der nach drei Kriterien Rückmeldung gibt"></textarea>
+        </div>
+        <div class="field">
+          <label>Was darf die KI nicht?</label>
+          <textarea data-note-key="telli_darf_nicht" placeholder="z.B. den Text umschreiben, Noten geben, vom Thema abweichen"></textarea>
+        </div>
+        <p class="muted" style="font-size: 13px; margin-top: 6px;">↑ Auto-gespeichert in deinen Notizen.</p>
+      </div>
+
+      <div>
+        <div class="card card--accent-sage">
+          <h3>Beispiel-Lernszenarien:</h3>
+          <ul class="clean" style="margin-top: 12px;">
+            <li><strong>Schreib-Feedback-Partner</strong> (Deutsch 9) — SuS schicken Text, KI gibt Feedback nach drei Kriterien</li>
+            <li><strong>Argumentations-Sparring</strong> (Politik 10) — KI vertritt Gegenposition, SuS verteidigen</li>
+            <li><strong>Sokratischer Dialog</strong> (Prakt. Philosophie 8) — KI stellt Rückfragen zur These</li>
+            <li><strong>Vokabel-Quiz mit Hinweisen</strong> (Englisch 6) — KI fragt ab, gibt Eselsbrücken</li>
+            <li><strong>Versuchsplaner-Check</strong> (Physik 8) — SuS erklären Aufbau, KI prüft Vollständigkeit</li>
+          </ul>
+        </div>
+
+        <div class="hint" style="margin-top: 16px;">
+          <strong>Kein Telli-Zugang?</strong> Sprich uns an — wir helfen beim Onboarding. Telli ist NRW-Schulplattform, DSGVO-konform und kostenlos.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 9: SÄULE 3 — BEISPIELE ZEIGEN ═══ -->
+<section class="slide slide--slate-tinted" id="s9" data-phase="4" data-title="Säule 3: Beispiele">
+  <div class="slide-inner">
+    <span class="slide-eyebrow">Säule 3 · KI-gebaute Lernumgebungen</span>
+    <h2 class="slide-title">Kein Codieren. Kein Hosting. Nur Prompt → Tool.</h2>
+    <p class="lead">Kleine interaktive Lernseiten, die im Browser laufen. Per QR-Code in den Unterricht. Eine bis vier Iterationen — fertig.</p>
+
+    <!-- BILD-SLOTS · Slide 9 — Vier echte Tool-Screenshots
+         Ersetze die Platzhalter durch Screenshots deiner bestehenden Tools.
+         Idealerweise ein typischer Bildschirm pro Tool, der den Charakter zeigt.
+         Bei Screenshots: ggf. mit weißem Rand oder Schatten arbeiten für klare Abgrenzung. -->
+    <div class="tool-grid" style="margin-top: 32px;">
+      <div class="tool-card tool-card--with-image">
+        <div class="image-slot image-slot--16x10">
+          <div class="image-slot__placeholder">
+            <span class="image-slot__icon">🐠</span>
+            <span class="image-slot__label">Aquarium-Baumeister</span>
+            <span class="image-slot__desc">Screenshot des Spielbildschirms</span>
+          </div>
+        </div>
+        <div class="tool-card__body">
+          <h4>Aquarium-Baumeister</h4>
+          <p>Mini-Spiel zur Multiplikation, Klasse 2 — fünf Iterationen.</p>
+          <span class="badge badge--outline">Mathe · Kl. 2</span>
+        </div>
+      </div>
+
+      <div class="tool-card tool-card--with-image">
+        <div class="image-slot image-slot--16x10">
+          <div class="image-slot__placeholder">
+            <span class="image-slot__icon">📝</span>
+            <span class="image-slot__label">Lernwörter-Trainer</span>
+            <span class="image-slot__desc">Screenshot der Übungsansicht</span>
+          </div>
+        </div>
+        <div class="tool-card__body">
+          <h4>Lernwörter-Trainer</h4>
+          <p>Rechtschreibung mit eigenem Wörterlistenimport, TTS, animiertes Feedback.</p>
+          <span class="badge badge--outline">Deutsch · Kl. 2</span>
+        </div>
+      </div>
+
+      <div class="tool-card tool-card--with-image">
+        <div class="image-slot image-slot--16x10">
+          <div class="image-slot__placeholder">
+            <span class="image-slot__icon">📐</span>
+            <span class="image-slot__label">Bohrmaschinen-Crashkurs</span>
+            <span class="image-slot__desc">Screenshot des Sicherheitsquiz</span>
+          </div>
+        </div>
+        <div class="tool-card__body">
+          <h4>Bohrmaschinen-Crashkurs</h4>
+          <p>Sicherheitstraining mit Quiz und Drag&amp;Drop — vier Iterationen.</p>
+          <span class="badge badge--outline">Technik · Kl. 5–8</span>
+        </div>
+      </div>
+
+      <div class="tool-card tool-card--with-image">
+        <div class="image-slot image-slot--16x10">
+          <div class="image-slot__placeholder">
+            <span class="image-slot__icon">🏠</span>
+            <span class="image-slot__label">Erste eigene Wohnung</span>
+            <span class="image-slot__desc">Screenshot einer Lernpfad-Seite</span>
+          </div>
+        </div>
+        <div class="tool-card__body">
+          <h4>Erste eigene Wohnung</h4>
+          <p>Sieben-Seiten-Lernpfad WP10 — zur Sequenzbegleitung.</p>
+          <span class="badge badge--outline">WP · Kl. 10</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hint" style="margin-top: 28px;">
+      <strong>Wichtig:</strong> Das ist keine Software-Entwicklung. Das ist Prompten — wie bei Säule 1, nur mit anderem Output. Die Hürde ist nicht das Können, sondern das Loslegen.
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 10: SÄULE 3 — LIVE-BAU ═══ -->
+<section class="slide slide--rust-tinted" id="s10" data-phase="4" data-title="Säule 3: Live-Bau">
+  <div class="slide-inner">
+    <span class="slide-eyebrow">Säule 3 · Live</span>
+    <h2 class="slide-title">Eure Idee — jetzt.</h2>
+    <p class="lead">Welches kleine interaktive Tool würdest du dir für deinen Unterricht wünschen? Konkret: ein Fach, eine Klasse, ein Lernziel.</p>
+
+    <div class="grid-2" style="margin-top: 28px;">
+      <div class="card card--accent-rust">
+        <h3>So läuft's gleich ab:</h3>
+        <ul class="clean" style="margin-top: 10px;">
+          <li>Eine Idee aus dem Plenum auswählen (1 Min)</li>
+          <li>Erster Prompt — ausführlich (2 Min)</li>
+          <li>Erste Version sichten (3 Min)</li>
+          <li>Iteration 1: bunter / spielerischer / mit Sound (3 Min)</li>
+          <li>Iteration 2: spezifische Verbesserung (3 Min)</li>
+          <li>QR-Code generieren — ihr nehmt's mit (3 Min)</li>
+        </ul>
+      </div>
+
+      <div class="live-qr-form">
+        <h3 style="margin-bottom: 12px;">Live-QR-Generator</h3>
+        <p class="muted" style="margin-bottom: 14px; font-size: 14px;">Sobald die fertige URL feststeht — hier einfügen, QR erscheint sofort.</p>
+        <label for="liveUrlInput">URL des fertigen Tools</label>
+        <input type="url" id="liveUrlInput" placeholder="https://...">
+        <button class="btn" onclick="renderLiveQR()">QR-Code anzeigen</button>
+
+        <div id="liveQrCanvas" class="qr-canvas" style="margin-top: 18px; display: none;"></div>
+        <p id="liveQrLabel" class="qr-label" style="display: none;"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 11: META — WIE WURDE DIESE SEITE GEBAUT ═══ -->
+<section class="slide" id="s11" data-phase="4" data-title="Wie wurde diese Seite gebaut?">
+  <div class="slide-inner" style="text-align: center;">
+    <span class="slide-eyebrow" style="display: inline-flex;">Meta-Moment</span>
+    <h2 class="slide-title">Wie wurde eigentlich diese Workshop-Seite gebaut?</h2>
+    <p class="lead" style="margin-left: auto; margin-right: auto;">Genauso wie alles, was ihr heute gesehen habt. Mit einem Prompt, ein paar Iterationen — und einer klaren Vorstellung davon, was die Seite können soll.</p>
+
+    <button class="btn" style="margin-top: 28px; padding: 14px 28px; font-size: 17px;" onclick="openSourceModal()">
+      Den Original-Prompt ansehen
+    </button>
+
+    <!-- BILD-SLOT · Slide 11 — Chat-Screenshot der Entstehung
+         Inhalt: Ein Screenshot der Chat-Konversation, in der die Workshop-Seite
+         mit Claude/ChatGPT entstanden ist. Idealerweise mit sichtbaren
+         Iterationsschritten ("mach das so", "kannst du Notizfunktion hinzufügen").
+         Alternative: drei Mini-Versionen der Seite nebeneinander, die zeigen,
+         wie sie sich entwickelt hat.
+         Wirkung: macht greifbar, wie so etwas wirklich entsteht. -->
+    <div class="image-slot image-slot--16x9" style="margin: 32px auto 0; max-width: 880px; text-align: left;">
+      <div class="image-slot__placeholder">
+        <span class="image-slot__icon">💭</span>
+        <span class="image-slot__label">Chat-Verlauf der Entstehung</span>
+        <span class="image-slot__desc">Screenshot deiner echten Konversation mit Claude — mit sichtbaren Iterationsschritten</span>
+      </div>
+    </div>
+
+    <div class="hint hint--slate" style="margin-top: 32px; text-align: left;">
+      <strong>Was du mitnimmst:</strong> Diese Workshop-Seite samt aller Materialien bleibt verfügbar. Wer tiefer einsteigen will — sprich mich an, wir finden ein Format dafür.
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 12: SICHERUNG — REFLEXIONS-KARTEIKARTE ═══ -->
+<section class="slide slide--sage-tinted" id="s12" data-phase="5" data-title="Sicherung: Mein nächster Schritt">
+  <div class="slide-inner">
+    <span class="slide-eyebrow">Phase 5 · Mein nächster Schritt</span>
+    <h2 class="slide-title" style="text-align: center;">Was nimmst du mit?</h2>
+    <p class="lead" style="text-align: center; max-width: 720px; margin: 0 auto 28px;">5 Minuten Einzelarbeit. Anschließend kurzer Austausch zu zweit. Du kannst alles am Ende als PDF mitnehmen.</p>
+
+    <div class="reflex-card">
+      <div class="field">
+        <label>1. Was probiere ich diese Woche aus?</label>
+        <textarea data-note-key="reflex_woche" placeholder="Eine konkrete Sache, klein genug zum Ausprobieren …"></textarea>
+      </div>
+      <div class="field">
+        <label>2. Welche Aufgabe / welches Material lasse ich von KI differenzieren?</label>
+        <textarea data-note-key="reflex_material" placeholder="Konkrete Aufgabe, konkrete Klasse …"></textarea>
+      </div>
+      <div class="field">
+        <label>3. Wo bekomme ich Hilfe, wenn ich nicht weiterkomme?</label>
+        <input type="text" data-note-key="reflex_hilfe" placeholder="Kollege:in, Fachschaft, Online-Quelle …">
+      </div>
+      <div class="field">
+        <label>4. Mein erster Schritt — bis wann?</label>
+        <input type="text" data-note-key="reflex_termin" placeholder="z.B. bis Freitag …">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 13: MATERIAL-POOL ═══ -->
+<section class="slide" id="s13" data-phase="5" data-title="Material-Pool">
+  <div class="slide-inner">
+    <span class="slide-eyebrow">Material-Pool</span>
+    <h2 class="slide-title">Alles, was du heute gesehen hast — zum Mitnehmen.</h2>
+
+    <div class="qr-pool">
+      <div class="qr-pool__item">
+        <div class="qr-pool__qr" data-qr-render="prompt_karte_pdf">
+          <div class="qr-pool__qr--empty">URL fehlt</div>
+        </div>
+        <div class="qr-pool__label">Prompt-Karte<br>(Differenzierung)</div>
+      </div>
+      <div class="qr-pool__item">
+        <div class="qr-pool__qr" data-qr-render="systemprompt_karte_pdf">
+          <div class="qr-pool__qr--empty">URL fehlt</div>
+        </div>
+        <div class="qr-pool__label">System-Prompt-Karte<br>(Lernszenario)</div>
+      </div>
+      <div class="qr-pool__item">
+        <div class="qr-pool__qr" data-qr-render="telli_beispiel">
+          <div class="qr-pool__qr--empty">URL fehlt</div>
+        </div>
+        <div class="qr-pool__label">Telli-Lernszenario<br>(Beispiel)</div>
+      </div>
+      <div class="qr-pool__item">
+        <div class="qr-pool__qr" data-qr-render="taskcards_pool">
+          <div class="qr-pool__qr--empty">URL fehlt</div>
+        </div>
+        <div class="qr-pool__label">TaskCards<br>(Material-Pool)</div>
+      </div>
+      <div class="qr-pool__item">
+        <div class="qr-pool__qr" data-qr-render="forms_feedback">
+          <div class="qr-pool__qr--empty">URL fehlt</div>
+        </div>
+        <div class="qr-pool__label">Workshop-Feedback<br>(Forms)</div>
+      </div>
+      <div class="qr-pool__item">
+        <div class="qr-pool__qr" data-qr-render="beispiel_tool">
+          <div class="qr-pool__qr--empty">URL fehlt</div>
+        </div>
+        <div class="qr-pool__label">Beispiel-Tool<br>aus Säule 3</div>
+      </div>
+    </div>
+
+    <p class="muted" style="text-align: center; margin-top: 24px;">⚙ oben rechts → URLs einmalig setzen, alle QRs rendern automatisch.</p>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 14: SCHLUSS ═══ -->
+<section class="slide slide--slate-hero" id="s14" data-phase="5" data-title="Danke">
+  <div class="slide-inner" style="text-align: center;">
+    <span class="slide-eyebrow">Workshop-Abschluss</span>
+    <h1 class="slide-title">Danke.</h1>
+    <p class="lead" style="margin-left: auto; margin-right: auto;">Drei Säulen, ein Werkstattgefühl, hoffentlich ein erster Anstoß. KI ist Werkzeug — die pädagogische Wirkung entsteht durch euch.</p>
+
+    <div style="margin-top: 36px;">
+      <button class="btn btn--sage" onclick="exportNotes()" style="font-size: 17px; padding: 14px 28px;">📄 Meine Notizen als PDF speichern</button>
+    </div>
+
+    <p class="muted" style="margin-top: 24px; color: rgba(255,255,255,0.75);">Tipp: Druckdialog → „Als PDF speichern". Funktioniert offline.</p>
+  </div>
+</section>
+
+</main>
+
+<!-- ═════════════════════════════════════════════════════════
+     NOTIZ-DRAWER
+     ═════════════════════════════════════════════════════════ -->
+<aside class="notes-drawer" id="notesDrawer" aria-hidden="true">
+  <div class="notes-head">
+    <div>
+      <h2>Meine Mitschrift</h2>
+      <div class="notes-head__sub" id="notesAutosaveLabel">Auto-gespeichert</div>
+    </div>
+    <button class="hb-btn" style="background: var(--slate-pale); color: var(--slate-dark);" onclick="toggleNotes()" aria-label="Schließen">✕</button>
+  </div>
+  <div class="notes-list" id="notesList">
+    <!-- dynamisch befüllt -->
+  </div>
+  <div class="notes-actions">
+    <button class="btn btn--ghost" onclick="clearAllNotes()">Alle löschen</button>
+    <button class="btn btn--sage" onclick="exportNotes()">Als PDF</button>
+  </div>
+</aside>
+
+<!-- ═════════════════════════════════════════════════════════
+     QR-SETUP-MODAL
+     ═════════════════════════════════════════════════════════ -->
+<div class="modal-backdrop" id="setupModal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>QR-Codes — URLs setzen</h2>
+      <button class="hb-btn" style="background: var(--slate-pale); color: var(--slate-dark);" onclick="closeSetup()" aria-label="Schließen">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="muted" style="margin-bottom: 16px;">Trage die URLs hier einmal ein — alle QR-Codes auf den Sektionen aktualisieren sich automatisch und werden im Browser gespeichert.</p>
+      <div id="urlRows"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn--ghost" onclick="closeSetup()">Abbrechen</button>
+      <button class="btn" onclick="saveUrls()">Speichern &amp; QRs aktualisieren</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════════════════════════
+     SOURCE-MODAL (Sektion 11)
+     ═════════════════════════════════════════════════════════ -->
+<div class="modal-backdrop" id="sourceModal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Wie wurde diese Seite gebaut?</h2>
+      <button class="hb-btn" style="background: var(--slate-pale); color: var(--slate-dark);" onclick="closeSourceModal()" aria-label="Schließen">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="muted" style="margin-bottom: 14px;">Der Prompt — sinngemäß, in einer Iteration entstanden:</p>
+      <pre class="source-pre">Plane eine workshop-begleitende HTML-Seite als Präsentation und Beispiel
+in einem. Die Seite soll durch den Workshop führen, den Zeitplan sichtbar
+machen und über QR-Codes die aktive Teilnahme ermöglichen.
+
+Anforderungen:
+- 14 Sektionen, jede ein Bildschirm
+- Header-Bar mit Phase, Phasen-Timer, Gesamt-Timer
+- Notizfunktion mit PDF-Druck am Ende
+- QR-Generator: URL einfügen, QR sofort sichtbar
+- HBG-SRL-Farbschema (Schieferblau / Rostorange / Salbeigrün)
+- Tastatursteuerung (Pfeile, Leertaste, N für Notizen, ESC für Übersicht)
+- localStorage für Notizen und URLs
+- Druckbare Mitschrift, offline-fähig
+
+Stil: web-inspiriert, klare Struktur, keine externen Abhängigkeiten
+außer einer kleinen QR-Lib.</pre>
+      <p class="muted" style="margin-top: 16px; font-size: 13px;">→ Genauso entstehen kleine interaktive Lernumgebungen wie die in Säule 3. Ein Prompt, drei bis fünf Iterationen, fertig.</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeSourceModal()">Schließen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════════════════════════
+     OVERVIEW
+     ═════════════════════════════════════════════════════════ -->
+<div class="overview" id="overview" role="dialog" aria-label="Sektionen-Übersicht">
+  <h2 style="text-align: center; margin-bottom: 18px; color: var(--slate-dark);">Sektionen-Übersicht</h2>
+  <div class="overview-grid" id="overviewGrid"></div>
+</div>
+
+<!-- ═════════════════════════════════════════════════════════
+     PRINT-CONTAINER (versteckt, wird nur beim Druck sichtbar)
+     ═════════════════════════════════════════════════════════ -->
+<div class="print-container" id="printContainer"></div>
+
+<!-- Tastatur-Hint -->
+<div class="kbd-hint" id="kbdHint">
+  <span><kbd>←</kbd> <kbd>→</kbd> Sektion</span>
+  <span><kbd>Leer</kbd> Timer</span>
+  <span><kbd>N</kbd> Notizen</span>
+  <span><kbd>S</kbd> Setup</span>
+  <span><kbd>Esc</kbd> Übersicht</span>
+</div>
+
+<script>
+// ═════════════════════════════════════════════════════════
+//  KONFIGURATION
+// ═════════════════════════════════════════════════════════
+const PHASES = [
+  { num: 1, name: 'Einstieg & Anker',           sections: [1,2,3,4],     duration: 12 * 60 },
+  { num: 2, name: 'Material differenzieren',    sections: [5,6],         duration: 25 * 60 },
+  { num: 3, name: 'Telli-Lernszenario',         sections: [7,8],         duration: 20 * 60 },
+  { num: 4, name: 'HTML live mit KI bauen',     sections: [9,10,11],     duration: 22 * 60 },
+  { num: 5, name: 'Sicherung & Transfer',       sections: [12,13,14],    duration: 11 * 60 },
+];
+
+const QR_KEYS = [
+  { key: 'prompt_karte_pdf',         label: 'Prompt-Karte (Differenzierung)' },
+  { key: 'systemprompt_karte_pdf',   label: 'System-Prompt-Karte (Lernszenario)' },
+  { key: 'telli_beispiel',           label: 'Telli-Lernszenario (Beispiel)' },
+  { key: 'taskcards_pool',           label: 'TaskCards Material-Pool' },
+  { key: 'forms_feedback',           label: 'Workshop-Feedback Forms' },
+  { key: 'beispiel_tool',            label: 'Beispiel-Tool aus Säule 3' },
+];
+
+const STORAGE = {
+  urls:  'hbg_kiworkshop_urls',
+  notes: 'hbg_kiworkshop_notes',
+  state: 'hbg_kiworkshop_state',
+};
+
+// ═════════════════════════════════════════════════════════
+//  STATE
+// ═════════════════════════════════════════════════════════
+let urls = loadJson(STORAGE.urls, {});
+let notes = loadJson(STORAGE.notes, {});
+let state = loadJson(STORAGE.state, { currentPhase: 1, totalElapsed: 0, phaseElapsed: 0, running: false });
+
+let timerInterval = null;
+let totalStartTs = null;
+let phaseStartTs = null;
+
+// Sektionen aus DOM lesen
+const SECTIONS = Array.from(document.querySelectorAll('section.slide')).map((sec, i) => ({
+  id: sec.id,
+  index: i + 1,
+  title: sec.dataset.title || `Sektion ${i+1}`,
+  phase: parseInt(sec.dataset.phase || '1', 10),
+  el: sec,
+}));
+
+let currentSection = 1;
+
+// ═════════════════════════════════════════════════════════
+//  STORAGE-HELPER
+// ═════════════════════════════════════════════════════════
+function loadJson(key, fallback) {
+  try { return JSON.parse(localStorage.getItem(key)) || fallback; }
+  catch (e) { return fallback; }
+}
+function saveJson(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); }
+  catch (e) {}
+}
+
+// ═════════════════════════════════════════════════════════
+//  QR-RENDERING
+// ═════════════════════════════════════════════════════════
+function renderQR(targetEl, url) {
+  if (!url || !url.trim()) {
+    return; // kein QR
+  }
+  try {
+    const qr = qrcode(0, 'M');
+    qr.addData(url);
+    qr.make();
+    const svg = qr.createSvgTag({ scalable: true });
+    targetEl.innerHTML = svg;
+  } catch (e) {
+    targetEl.innerHTML = '<div class="qr-canvas--empty">QR-Generierung fehlgeschlagen</div>';
+  }
+}
+
+function refreshAllQRs() {
+  // Alle Container mit data-qr-render="key"
+  document.querySelectorAll('[data-qr-render]').forEach(el => {
+    const key = el.dataset.qrRender;
+    const url = urls[key];
+    if (url && url.trim()) {
+      renderQR(el, url);
+    } else {
+      // Empty-State zurücksetzen, falls leer
+      if (el.classList.contains('qr-canvas')) {
+        el.innerHTML = '<div class="qr-canvas--empty">QR wird gesetzt sobald URL hinterlegt ist.<br><br>⚙ oben rechts → URL eintragen.</div>';
+      } else {
+        el.innerHTML = '<div class="qr-pool__qr--empty">URL fehlt</div>';
+      }
+    }
+  });
+
+  // Labels aktualisieren (falls URL kürzer/länger gewählt)
+  document.querySelectorAll('[data-qr-label]').forEach(el => {
+    const key = el.dataset.qrLabel;
+    if (urls[key]) {
+      // Label-Text bleibt, optional URL anhängen
+    }
+  });
+}
+
+// ═════════════════════════════════════════════════════════
+//  QR-SETUP-MODAL
+// ═════════════════════════════════════════════════════════
+function buildSetupRows(focusKey) {
+  const container = document.getElementById('urlRows');
+  container.innerHTML = '';
+  QR_KEYS.forEach(({key, label}) => {
+    const row = document.createElement('div');
+    row.className = 'url-row';
+    row.innerHTML = `
+      <label for="url_${key}">${label}</label>
+      <input type="url" id="url_${key}" data-url-key="${key}" placeholder="https://..." value="${urls[key] || ''}">
+    `;
+    container.appendChild(row);
+  });
+  if (focusKey) {
+    setTimeout(() => {
+      const el = document.getElementById('url_' + focusKey);
+      if (el) el.focus();
+    }, 100);
+  }
+}
+
+function openSetup(focusKey) {
+  buildSetupRows(focusKey);
+  document.getElementById('setupModal').classList.add('open');
+}
+
+function closeSetup() {
+  document.getElementById('setupModal').classList.remove('open');
+}
+
+function saveUrls() {
+  document.querySelectorAll('[data-url-key]').forEach(input => {
+    urls[input.dataset.urlKey] = input.value.trim();
+  });
+  saveJson(STORAGE.urls, urls);
+  refreshAllQRs();
+  closeSetup();
+}
+
+// ═════════════════════════════════════════════════════════
+//  LIVE-QR (Sektion 10)
+// ═════════════════════════════════════════════════════════
+function renderLiveQR() {
+  const url = document.getElementById('liveUrlInput').value.trim();
+  const canvas = document.getElementById('liveQrCanvas');
+  const label = document.getElementById('liveQrLabel');
+  if (!url) return;
+  canvas.style.display = 'flex';
+  label.style.display = 'block';
+  label.textContent = url;
+  renderQR(canvas, url);
+}
+
+// ═════════════════════════════════════════════════════════
+//  SOURCE-MODAL
+// ═════════════════════════════════════════════════════════
+function openSourceModal() {
+  document.getElementById('sourceModal').classList.add('open');
+}
+function closeSourceModal() {
+  document.getElementById('sourceModal').classList.remove('open');
+}
+
+// ═════════════════════════════════════════════════════════
+//  NOTIZEN-PANEL
+// ═════════════════════════════════════════════════════════
+function buildNotesPanel() {
+  const list = document.getElementById('notesList');
+  list.innerHTML = '';
+
+  // Pro Sektion ein Block (außer Sektionen ohne sinnvolle Notiz wie Titel-Slides)
+  SECTIONS.forEach(sec => {
+    // Optional: Titel-Slides ausblenden (s1, s2, s14)
+    if (['s1','s2','s14'].includes(sec.id)) return;
+
+    const block = document.createElement('div');
+    block.className = 'notes-section';
+    block.innerHTML = `
+      <div class="notes-section__head">Phase ${sec.phase} · Sektion ${sec.index}</div>
+      <div class="notes-section__title">${sec.title}</div>
+      <textarea class="notes-textarea" data-note-key="note_${sec.id}" placeholder="Deine Notiz zu dieser Sektion …">${notes['note_' + sec.id] || ''}</textarea>
+    `;
+    list.appendChild(block);
+  });
+
+  // Jetzt alle Inputs in der ganzen Seite mit data-note-key wiederherstellen
+  // (auch außerhalb des Drawers, z.B. Reflexions-Karteikarte und Konzeptions-Form)
+  document.querySelectorAll('[data-note-key]').forEach(el => {
+    const k = el.dataset.noteKey;
+    if (notes[k] !== undefined && el.value === '') el.value = notes[k];
+  });
+}
+
+let saveDebounce = null;
+function bindNoteInputs() {
+  document.querySelectorAll('[data-note-key]').forEach(el => {
+    el.addEventListener('input', () => {
+      const k = el.dataset.noteKey;
+      notes[k] = el.value;
+      clearTimeout(saveDebounce);
+      saveDebounce = setTimeout(() => {
+        saveJson(STORAGE.notes, notes);
+        flashAutosave();
+        // Spiegelung: wenn dasselbe key auf mehreren Inputs ist, synchronisieren
+        document.querySelectorAll('[data-note-key="' + k + '"]').forEach(other => {
+          if (other !== el) other.value = el.value;
+        });
+      }, 350);
+    });
+  });
+}
+
+function flashAutosave() {
+  const lbl = document.getElementById('notesAutosaveLabel');
+  if (!lbl) return;
+  lbl.textContent = '✓ Gespeichert';
+  lbl.style.color = 'var(--sage-dark)';
+  setTimeout(() => {
+    lbl.textContent = 'Auto-gespeichert';
+    lbl.style.color = '';
+  }, 1500);
+}
+
+function toggleNotes() {
+  const drawer = document.getElementById('notesDrawer');
+  const open = drawer.classList.toggle('open');
+  drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+  document.getElementById('notesBtn').classList.toggle('active', open);
+}
+
+function clearAllNotes() {
+  if (!confirm('Alle Notizen wirklich löschen? Das kann nicht rückgängig gemacht werden.')) return;
+  notes = {};
+  saveJson(STORAGE.notes, notes);
+  document.querySelectorAll('[data-note-key]').forEach(el => el.value = '');
+}
+
+// ═════════════════════════════════════════════════════════
+//  PDF-DRUCK
+// ═════════════════════════════════════════════════════════
+function exportNotes() {
+  const printEl = document.getElementById('printContainer');
+  const today = new Date().toLocaleDateString('de-DE', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  let html = `
+    <h1>Meine Mitschrift</h1>
+    <div class="print-meta">Workshop „KI-Werkzeuge für selbstreguliertes Lernen" · ${today} · HBG Dortmund</div>
+  `;
+
+  // Sektion-Notizen
+  SECTIONS.forEach(sec => {
+    if (['s1','s2','s14'].includes(sec.id)) return;
+    const noteVal = (notes['note_' + sec.id] || '').trim();
+    if (noteVal) {
+      html += `
+        <div class="print-section">
+          <h2>Phase ${sec.phase} · Sektion ${sec.index}</h2>
+          <div class="print-st">${sec.title}</div>
+          <div class="print-body">${escapeHtml(noteVal)}</div>
+        </div>
+      `;
+    }
+  });
+
+  // Konzeptions-Felder (Säule 2)
+  const concept = {
+    telli_thema: 'Thema / Lernanlass',
+    telli_darf: 'Was darf der Bot?',
+    telli_darf_nicht: 'Was darf der Bot nicht?',
+  };
+  const conceptHasContent = Object.keys(concept).some(k => (notes[k]||'').trim());
+  if (conceptHasContent) {
+    html += `<div class="print-section"><h2>Säule 2 · Mein Telli-Briefing</h2>`;
+    Object.entries(concept).forEach(([k, label]) => {
+      const v = (notes[k]||'').trim();
+      if (v) html += `<div class="print-st">${label}</div><div class="print-body" style="margin-bottom:10px;">${escapeHtml(v)}</div>`;
+    });
+    html += `</div>`;
+  }
+
+  // Reflexion (Sektion 12)
+  const reflex = {
+    reflex_woche:    'Was probiere ich diese Woche aus?',
+    reflex_material: 'Welches Material lasse ich von KI differenzieren?',
+    reflex_hilfe:    'Wo bekomme ich Hilfe?',
+    reflex_termin:   'Mein erster Schritt — bis wann?',
+  };
+  const reflexHasContent = Object.keys(reflex).some(k => (notes[k]||'').trim());
+  if (reflexHasContent) {
+    html += `<div class="print-section"><h2>Phase 5 · Mein nächster Schritt</h2>`;
+    Object.entries(reflex).forEach(([k, label]) => {
+      const v = (notes[k]||'').trim();
+      if (v) html += `<div class="print-st">${label}</div><div class="print-body" style="margin-bottom:10px;">${escapeHtml(v)}</div>`;
+    });
+    html += `</div>`;
+  }
+
+  // Falls gar nichts da:
+  if (!html.includes('print-section')) {
+    html += `<div class="print-section"><div class="print-empty">Du hast noch keine Notizen erfasst — die Druckansicht ist deshalb leer.</div></div>`;
+  }
+
+  printEl.innerHTML = html;
+  setTimeout(() => window.print(), 100);
+}
+
+function escapeHtml(str) {
+  return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ═════════════════════════════════════════════════════════
+//  TIMER & PHASEN
+// ═════════════════════════════════════════════════════════
+function getCurrentPhase() {
+  return PHASES.find(p => p.num === state.currentPhase) || PHASES[0];
+}
+
+function fmtTime(secs) {
+  const sign = secs < 0 ? '-' : '';
+  secs = Math.abs(Math.floor(secs));
+  const m = String(Math.floor(secs / 60)).padStart(2, '0');
+  const s = String(secs % 60).padStart(2, '0');
+  return `${sign}${m}:${s}`;
+}
+
+function updateTimerDisplay() {
+  const phase = getCurrentPhase();
+  const remaining = phase.duration - state.phaseElapsed;
+  const phaseEl = document.getElementById('phaseTimer');
+  document.getElementById('phaseTimerValue').textContent = fmtTime(remaining);
+  phaseEl.classList.toggle('warn', remaining <= 60 && remaining > 0);
+  phaseEl.classList.toggle('over', remaining <= 0);
+
+  document.getElementById('totalTimerValue').textContent = fmtTime(state.totalElapsed);
+}
+
+function tick() {
+  state.totalElapsed += 1;
+  state.phaseElapsed += 1;
+  updateTimerDisplay();
+  saveJson(STORAGE.state, state);
+}
+
+function startTimer() {
+  if (timerInterval) return;
+  state.running = true;
+  document.getElementById('phaseToggle').textContent = '⏸';
+  timerInterval = setInterval(tick, 1000);
+}
+
+function stopTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = null;
+  state.running = false;
+  document.getElementById('phaseToggle').textContent = '▶';
+  saveJson(STORAGE.state, state);
+}
+
+function toggleTimer() {
+  if (state.running) stopTimer(); else startTimer();
+}
+
+function setPhase(num) {
+  if (num < 1) num = 1;
+  if (num > PHASES.length) num = PHASES.length;
+  state.currentPhase = num;
+  state.phaseElapsed = 0;
+  saveJson(STORAGE.state, state);
+  renderPhaseInfo();
+  updateTimerDisplay();
+  // Springe zur ersten Sektion dieser Phase
+  const phase = getCurrentPhase();
+  const firstSection = phase.sections[0];
+  goToSection(firstSection);
+}
+
+function nextPhase() { setPhase(state.currentPhase + 1); }
+function prevPhase() { setPhase(state.currentPhase - 1); }
+
+function renderPhaseInfo() {
+  const phase = getCurrentPhase();
+  document.getElementById('phaseLabel').textContent = `Phase ${phase.num} / ${PHASES.length}`;
+  document.getElementById('phaseName').textContent = phase.name;
+}
+
+// ═════════════════════════════════════════════════════════
+//  SEKTIONEN-NAVIGATION
+// ═════════════════════════════════════════════════════════
+function goToSection(num) {
+  if (num < 1) num = 1;
+  if (num > SECTIONS.length) num = SECTIONS.length;
+  currentSection = num;
+  const sec = document.getElementById('s' + num);
+  if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // Phasen-Anzeige nur synchronisieren, Timer NICHT zurücksetzen
+  // (Timer-Reset passiert nur explizit über ⏮ ⏭ in der Header-Bar)
+  const targetPhase = SECTIONS[num-1].phase;
+  if (targetPhase !== state.currentPhase) {
+    state.currentPhase = targetPhase;
+    renderPhaseInfo();
+    updateTimerDisplay();
+    saveJson(STORAGE.state, state);
+  }
+}
+function nextSection() { goToSection(currentSection + 1); }
+function prevSection() { goToSection(currentSection - 1); }
+
+// ═════════════════════════════════════════════════════════
+//  ÜBERSICHT
+// ═════════════════════════════════════════════════════════
+function buildOverview() {
+  const grid = document.getElementById('overviewGrid');
+  grid.innerHTML = '';
+  SECTIONS.forEach(sec => {
+    const tile = document.createElement('button');
+    tile.className = 'ov-tile';
+    tile.innerHTML = `
+      <div class="ov-tile__num">Sektion ${sec.index}</div>
+      <div class="ov-tile__title">${sec.title}</div>
+      <div class="ov-tile__phase">Phase ${sec.phase}</div>
+    `;
+    tile.addEventListener('click', () => {
+      goToSection(sec.index);
+      closeOverview();
+    });
+    grid.appendChild(tile);
+  });
+}
+function openOverview() { document.getElementById('overview').classList.add('open'); }
+function closeOverview() { document.getElementById('overview').classList.remove('open'); }
+function toggleOverview() {
+  document.getElementById('overview').classList.toggle('open');
+}
+
+// ═════════════════════════════════════════════════════════
+//  SCROLL-OBSERVER (welche Sektion ist sichtbar?)
+// ═════════════════════════════════════════════════════════
+function initScrollObserver() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting && e.intersectionRatio > 0.5) {
+        const idx = SECTIONS.findIndex(s => s.id === e.target.id);
+        if (idx >= 0) currentSection = idx + 1;
+      }
+    });
+  }, { threshold: [0.5] });
+  SECTIONS.forEach(s => obs.observe(s.el));
+}
+
+// ═════════════════════════════════════════════════════════
+//  TASTATURSTEUERUNG
+// ═════════════════════════════════════════════════════════
+function initKeyboard() {
+  document.addEventListener('keydown', e => {
+    // Wenn in Eingabefeld → nicht navigieren
+    const tag = e.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); nextSection(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prevSection(); }
+    else if (e.key === ' ') { e.preventDefault(); toggleTimer(); }
+    else if (e.key === 'n' || e.key === 'N') { toggleNotes(); }
+    else if (e.key === 's' || e.key === 'S') { openSetup(); }
+    else if (e.key === 'Escape') { toggleOverview(); }
+    else if (e.key === '?' ) { toggleKbdHint(); }
+  });
+}
+
+let kbdHintTimer = null;
+function showKbdHint() {
+  document.getElementById('kbdHint').classList.add('show');
+  clearTimeout(kbdHintTimer);
+  kbdHintTimer = setTimeout(() => {
+    document.getElementById('kbdHint').classList.remove('show');
+  }, 5000);
+}
+function toggleKbdHint() {
+  document.getElementById('kbdHint').classList.toggle('show');
+}
+
+// ═════════════════════════════════════════════════════════
+//  INIT
+// ═════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  // Phasen-Anzeige
+  renderPhaseInfo();
+  updateTimerDisplay();
+
+  // QRs
+  refreshAllQRs();
+
+  // Notizen-Panel aufbauen
+  buildNotesPanel();
+  bindNoteInputs();
+
+  // Übersicht
+  buildOverview();
+
+  // Header-Buttons
+  document.getElementById('phasePrev').addEventListener('click', prevPhase);
+  document.getElementById('phaseNext').addEventListener('click', nextPhase);
+  document.getElementById('phaseToggle').addEventListener('click', toggleTimer);
+  document.getElementById('sectPrev').addEventListener('click', prevSection);
+  document.getElementById('sectNext').addEventListener('click', nextSection);
+  document.getElementById('overviewBtn').addEventListener('click', toggleOverview);
+  document.getElementById('setupBtn').addEventListener('click', () => openSetup());
+  document.getElementById('notesBtn').addEventListener('click', toggleNotes);
+
+  // Setup-Modal: ESC, Backdrop-Klick
+  document.getElementById('setupModal').addEventListener('click', e => {
+    if (e.target.id === 'setupModal') closeSetup();
+  });
+  document.getElementById('sourceModal').addEventListener('click', e => {
+    if (e.target.id === 'sourceModal') closeSourceModal();
+  });
+
+  // Scroll-Observer
+  initScrollObserver();
+
+  // Tastatur
+  initKeyboard();
+
+  // Tastatur-Hint nach 1s einmal kurz zeigen
+  setTimeout(showKbdHint, 1200);
+});
+</script>
+</body>
+</html>
