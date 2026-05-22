@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kompetenzraster für Feedback und Leistungsbewertung</title>
+<style>
+:root{
+  --slate:#3E5668; --slate2:#263947; --rust:#D97A4A; --sage:#7DBB6F; --paper:#F5F4F1;
+  --ink:#1f2933; --muted:#667680; --line:#d8ddd9; --ghost:#EEF3F7; --warn:#C17B00;
+  --min:#f7efe8; --reg:#edf6ea; --exp:#eef3f7;
+}
+*{box-sizing:border-box} body{margin:0;background:var(--paper);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);}
+.app{min-height:100vh;display:grid;grid-template-rows:1fr auto}.slides{position:relative;overflow:hidden}.slide{display:none;min-height:calc(100vh - 76px);padding:4.5vh 5.5vw 3vh}.slide.active{display:flex;flex-direction:column;gap:1.1rem}.kicker{color:var(--rust);font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:1rem}.title{font-size:clamp(2.4rem,5vw,5.3rem);line-height:.95;font-weight:900;color:var(--slate2);margin:0}.subtitle{font-size:clamp(1.15rem,2vw,1.8rem);color:var(--slate);font-weight:650}.two{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;align-items:start}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}.card{background:white;border:1px solid var(--line);border-radius:24px;padding:1.2rem;box-shadow:0 10px 28px rgba(38,57,71,.08)}.card.soft{background:rgba(255,255,255,.7)}h1,h2,h3{margin:.1rem 0 .4rem}h2{font-size:clamp(2rem,3.6vw,3.8rem);line-height:1;color:var(--slate2)}h3{font-size:clamp(1.25rem,2vw,2rem);color:var(--slate)}p,li{font-size:clamp(1rem,1.35vw,1.35rem);line-height:1.45}.big{font-size:clamp(1.8rem,3.1vw,3rem);line-height:1.08;font-weight:850;color:var(--slate2)}.claim{font-size:clamp(1.4rem,2.4vw,2.4rem);font-weight:850;color:var(--slate2);line-height:1.15}.tag{display:inline-flex;gap:.4rem;align-items:center;border-radius:999px;background:var(--ghost);border:1px solid var(--line);padding:.35rem .7rem;font-weight:800;color:var(--slate);margin:.15rem}.accent{color:var(--rust)}.green{color:#4c8c42}.muted{color:var(--muted)}.tiny{font-size:.92rem;color:var(--muted)}
+table{width:100%;border-collapse:separate;border-spacing:0;background:white;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 8px 20px rgba(38,57,71,.06)}th,td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:.72rem;vertical-align:top;font-size:clamp(.78rem,1.05vw,1rem);line-height:1.3}th:last-child,td:last-child{border-right:0}tr:last-child td{border-bottom:0}th{background:var(--slate);color:white;text-align:left;font-size:clamp(.82rem,1.1vw,1.05rem)}th.min,td.min{background:var(--min)}th.reg,td.reg{background:var(--reg)}th.exp,td.exp{background:var(--exp)}.points{display:grid;grid-template-columns:repeat(5,1fr);gap:.6rem}.pointbox{background:white;border:1px solid var(--line);border-radius:16px;padding:.85rem;text-align:center}.pointbox b{font-size:2.4rem;color:var(--rust)}.toolbar{display:grid;grid-template-columns:auto 1fr auto;gap:.8rem;align-items:center;padding:.65rem .9rem;background:rgba(245,244,241,.93);backdrop-filter:blur(8px);border-top:1px solid var(--line)}button{border:0;background:var(--slate);color:white;font-weight:800;border-radius:999px;padding:.7rem .95rem;cursor:pointer}button:hover{filter:brightness(1.07)}button.secondary{background:white;color:var(--slate);border:1px solid var(--line)}button.rust{background:var(--rust)}.progress{height:10px;background:#dfe5e8;border-radius:999px;overflow:hidden}.bar{height:100%;background:linear-gradient(90deg,var(--rust),var(--sage));width:0}.timer{font-variant-numeric:tabular-nums;font-size:1.25rem;font-weight:900;color:var(--slate2);min-width:78px;text-align:center}.slideNo{font-weight:800;color:var(--muted);min-width:70px}.notes{position:fixed;right:1rem;top:1rem;width:min(420px,calc(100vw - 2rem));max-height:calc(100vh - 110px);overflow:auto;background:#162634;color:white;border-radius:22px;padding:1rem 1.1rem;box-shadow:0 20px 45px rgba(0,0,0,.25);z-index:5;display:none}.notes.show{display:block}.notes h3{color:white}.notes p,.notes li{font-size:1rem}.notes textarea{width:100%;min-height:110px;border-radius:14px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:white;padding:.8rem;margin-top:.5rem}.pillrow{display:flex;flex-wrap:wrap;gap:.4rem}.quote{border-left:6px solid var(--rust);padding:.7rem 1rem;background:white;border-radius:14px;font-size:clamp(1.15rem,1.9vw,1.8rem);font-weight:780;color:var(--slate2)}.prompt{white-space:pre-wrap;background:#102331;color:#eaf4ff;border-radius:18px;padding:1rem;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:clamp(.72rem,1vw,.95rem);line-height:1.35}.center{display:grid;place-items:center;text-align:center;flex:1}.rubricSmall td,.rubricSmall th{font-size:clamp(.68rem,.9vw,.9rem);padding:.55rem}.rubricSmall thead th,.rubricSmall thead th.min,.rubricSmall thead th.reg,.rubricSmall thead th.exp{background:var(--slate)!important;color:white!important}.commentActions{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.7rem}.notes .hint{font-size:.9rem;color:rgba(255,255,255,.75);margin:.2rem 0 .6rem}.agenda{display:grid;grid-template-columns:90px 1fr;gap:.4rem .8rem}.agenda b{color:var(--rust)}.checklist li{margin:.25rem 0}.stage{padding:.8rem;border-radius:18px;background:white;border:1px solid var(--line)}@media(max-width:900px){.two,.three,.points{grid-template-columns:1fr}.slide{padding:3vh 4vw 2vh}.toolbar{grid-template-columns:1fr;}.hideMobile{display:none}table{font-size:.85rem}.slide{min-height:auto}.app{display:block}.notes{position:static;margin:1rem;width:auto;max-height:none}.notes.show{display:block}}
+@media print{.toolbar,.notes{display:none!important}.slide{display:flex!important;page-break-after:always;min-height:auto}.app{display:block}body{background:white}}
+</style>
+</head>
+<body>
+<div class="app">
+  <main class="slides" id="slides">
+    <section class="slide active" data-min="2" data-note="Begrüßung. Der Fokus: Kompetenzraster als Brücke zwischen Feedback, Leistungsbewertung und Selbstregulation. Nicht als Zusatzbürokratie rahmen, sondern als Werkzeug für Orientierung und nächste Lernschritte.">
+      <div class="center">
+        <div>
+          <div class="kicker">Pädagogischer Tag · 30-Minuten-Impuls</div>
+          <h1 class="title">Kompetenzraster für Feedback und Leistungsbewertung einsetzen</h1>
+          <p class="subtitle">Transparenz · Orientierung · Selbstregulation</p>
+          <div class="pillrow" style="justify-content:center;margin-top:1.2rem">
+            <span class="tag">Deutsch 10</span><span class="tag">Technik 5</span><span class="tag">KI-Live-Demo</span><span class="tag">Werkstatt im PZ</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-min="3" data-note="Einstieg über bekannte Rückmeldesituationen: Note, kurzer Kommentar, rote Markierung. Leitfrage: Hilft das beim Weiterlernen? Kompetenzraster sollen Feedback in nächste Schritte übersetzen.">
+      <div class="kicker">Ausgangsfrage</div>
+      <h2>Rückmeldung: Bewertung oder Lernorientierung?</h2>
+      <div class="two">
+        <div class="card">
+          <h3>Oft bekommen Schüler:innen …</h3>
+          <p class="big">eine Note, einen Kommentar, ein paar Markierungen.</p>
+          <p class="muted">Aber nicht immer ist klar: Was genau gelingt? Was fehlt? Was mache ich beim nächsten Mal anders?</p>
+        </div>
+        <div class="card">
+          <h3>SRL-taugliches Feedback fragt …</h3>
+          <p class="claim">Wo stehe ich? Was gelingt schon? Was ist mein nächster sinnvoller Lernschritt?</p>
+        </div>
+      </div>
+      <div class="quote">Kompetenzraster machen Rückmeldung anschlussfähig: aus Bewertung wird Orientierung.</div>
+    </section>
+
+    <section class="slide" data-min="3" data-note="Hier die Grundidee schärfen: Ein Kompetenzraster ist kein Bewertungsmonster, sondern eine Lernlandkarte. Wichtig: beobachtbare Kriterien, altersangemessene Sprache, handhabbare Anzahl von Kategorien.">
+      <div class="kicker">Grundidee</div>
+      <h2>Was ist ein Kompetenzraster?</h2>
+      <div class="three">
+        <div class="card"><h3>1. Kompetenz</h3><p>Was soll gelernt, gezeigt oder verbessert werden?</p></div>
+        <div class="card"><h3>2. Kriterien</h3><p>Woran erkennt man Qualität konkret und beobachtbar?</p></div>
+        <div class="card"><h3>3. Entwicklungsstufen</h3><p>Wie sieht der nächste Schritt aus?</p></div>
+      </div>
+      <div class="card soft">
+        <p class="claim">Ein gutes Raster beschreibt nicht nur das Ergebnis, sondern auch Vorgehen, Strategieeinsatz, Prüfung und Reflexion.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-min="3" data-note="Die drei Niveaustufen als gemeinsame Sprache für den Input festlegen. Wichtig: Mindeststandard ist nicht gleich mangelhaft, sondern der erste erreichbare Standard. Expertenstandard enthält oft Selbstprüfung, Begründung oder Transfer.">
+      <div class="kicker">Niveaustufen</div>
+      <h2>Drei Standards als gemeinsame Sprache</h2>
+      <div class="three">
+        <div class="card" style="background:var(--min)"><h3>Mindeststandard</h3><p>Grundlegende Anforderungen werden erreicht. Häufig noch mit Unterstützung oder wenig Tiefe.</p><p class="big accent">1 Punkt</p></div>
+        <div class="card" style="background:var(--reg)"><h3>Regelstandard</h3><p>Die Kompetenz wird solide, passend und weitgehend selbstständig gezeigt.</p><p class="big green">2 Punkte</p></div>
+        <div class="card" style="background:var(--exp)"><h3>Expertenstandard</h3><p>Die Kompetenz wird sicher, bewusst und reflektiert gezeigt. Vorgehen kann erklärt oder übertragen werden.</p><p class="big">3 Punkte</p></div>
+      </div>
+      <p class="tiny">Für Leistungsbewertung kann zusätzlich gelten: nicht nachweisbar = 0 Punkte.</p>
+    </section>
+
+    <section class="slide" data-min="3" data-note="Hier die Oberstufenlogik einführen, ohne sie zu überkomplizieren. Bei fünf Kategorien entsteht ein handliches 0–15-Punkte-System. Wichtig: Es ersetzt keine pädagogische Entscheidung, macht aber Bewertung transparent.">
+      <div class="kicker">Bewertungslogik</div>
+      <h2>5 Kompetenzkategorien × 3 Standards = 0–15 Punkte</h2>
+      <div class="points">
+        <div class="pointbox"><b>0</b><br>nicht nachweisbar</div>
+        <div class="pointbox"><b>1</b><br>Mindeststandard</div>
+        <div class="pointbox"><b>2</b><br>Regelstandard</div>
+        <div class="pointbox"><b>3</b><br>Expertenstandard</div>
+        <div class="pointbox"><b>15</b><br>maximal bei 5 Kategorien</div>
+      </div>
+      <div class="card">
+        <p class="claim">Beispiel: 5 Kategorien werden jeweils mit 0, 1, 2 oder 3 Punkten bewertet. Die Summe ergibt eine transparente 0–15-Punkte-Bewertung wie in der Oberstufe.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-min="3" data-note="Die Verbindung zu Selbstregulation explizit machen: Das Raster ist nicht nur für die Lehrkraft, sondern für Schüler:innen vor, während und nach der Arbeit nutzbar.">
+      <div class="kicker">SRL-Verbindung</div>
+      <h2>Wann ist ein Raster SRL-tauglich?</h2>
+      <div class="two">
+        <div class="card"><h3>Es hilft beim Planen</h3><p>Was wird erwartet? Worauf achte ich? Welche Strategie brauche ich?</p></div>
+        <div class="card"><h3>Es hilft beim Überwachen</h3><p>Wo stehe ich gerade? Was fehlt noch? Welche Hilfe nutze ich?</p></div>
+        <div class="card"><h3>Es hilft beim Anpassen</h3><p>Was ändere ich während der Arbeit? Wie verbessere ich mein Ergebnis?</p></div>
+        <div class="card"><h3>Es hilft beim Reflektieren</h3><p>Was gelingt schon? Was ist mein nächster Lernschritt?</p></div>
+      </div>
+      <div class="quote">Ein Raster ist SRL-tauglich, wenn Schüler:innen damit weiterlernen können.</div>
+    </section>
+
+    <section class="slide" data-min="4" data-note="Beispiel aus Deutsch 10 zeigen. Es ist eine Zwischenbewertung nach drei Doppelstunden: nicht das Endprodukt, sondern der Arbeitsstand in der Mitte des Projekts. Das eignet sich gut, um Feedback während des Lernprozesses zu zeigen.">
+      <div class="kicker">Beispiel Deutsch 10</div>
+      <h2>Zwischenbewertung: Projekt „Film & Sprache“</h2>
+      <p class="subtitle">Bewertet wird der Arbeitsstand in der Mitte des Projekts – nicht das fertige Endprodukt.</p>
+      <table class="rubricSmall">
+        <thead><tr><th>Bereich</th><th class="min">Mindeststandard</th><th class="reg">Regelstandard</th><th class="exp">Expertenstandard</th></tr></thead>
+        <tbody>
+          <tr><td><b>1. Projektidee und Leitfrage</b></td><td class="min">Du hast ein Thema gewählt und ein grobes Ziel formuliert.</td><td class="reg">Du hast eine klare Leitfrage und ein passendes Produkt geplant.</td><td class="exp">Deine Leitfrage ist genau eingegrenzt, fachlich sinnvoll und gut untersuchbar.</td></tr>
+          <tr><td><b>2. Material und Beispiele</b></td><td class="min">Du hast erstes Material gesammelt. Es passt grundsätzlich zum Thema.</td><td class="reg">Du hast mehrere passende Beispiele oder Quellen gesammelt und kannst deine Auswahl erklären.</td><td class="exp">Du hast gezielt aussagekräftiges Material ausgewählt und begründest, warum es gut zu deiner Leitfrage passt.</td></tr>
+          <tr><td><b>3. Fachliche Untersuchung</b></td><td class="min">Du beschreibst erste Auffälligkeiten und nutzt einzelne passende Fachbegriffe.</td><td class="reg">Du untersuchst dein Material mit passenden Fachbegriffen und erklärst erste Wirkungen oder Bedeutungen.</td><td class="exp">Du analysierst genau und erklärst differenziert, wie filmische oder sprachliche Mittel wirken.</td></tr>
+          <tr><td><b>4. Zwischenergebnisse</b></td><td class="min">Du hast erste Ergebnisse notiert. Sie sind noch allgemein.</td><td class="reg">Du hast klare Zwischenergebnisse formuliert, die zu deiner Leitfrage passen.</td><td class="exp">Deine Zwischenergebnisse sind überzeugend, gut begründet und zeigen bereits eine klare Antwort auf deine Leitfrage.</td></tr>
+          <tr><td><b>5. Arbeitsweise und Zusammenarbeit</b></td><td class="min">Du arbeitest am Projekt mit, brauchst aber noch Unterstützung.</td><td class="reg">Du nutzt die Arbeitszeit sinnvoll, hältst Absprachen ein und bringst dich verlässlich ein.</td><td class="exp">Du arbeitest sehr selbstständig, übernimmst Verantwortung und unterstützt die Gruppe beim Vorankommen.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="slide" data-min="4" data-note="Beispiel Technik 5. Hier wird sichtbar, dass Kompetenzraster nicht nur für Textprodukte funktionieren. Praktische Kompetenzen lassen sich ebenfalls sprachlich knapp und beobachtbar beschreiben.">
+      <div class="kicker">Beispiel Technik 5</div>
+      <h2>Selbsteinschätzung: Handschmeichler</h2>
+      <p class="subtitle">Schüler:innen kreuzen pro Zeile die Aussage an, die am besten zu ihrem Arbeitsstand passt.</p>
+      <table class="rubricSmall">
+        <thead><tr><th>Bereich</th><th class="min">Mindeststandard</th><th class="reg">Regelstandard</th><th class="exp">Expertenstandard</th></tr></thead>
+        <tbody>
+          <tr><td><b>Ablängen mit der Feinsäge</b></td><td class="min">Ich spanne mein Holz fest ein und säge langsam.</td><td class="reg">Ich säge gerade entlang der Linie und arbeite ruhig.</td><td class="exp">Ich säge genau entlang der Markierung und verbessere Fehler selbst.</td></tr>
+          <tr><td><b>Formen mit Raspel</b></td><td class="min">Ich benutze die Raspel und mache die Ecken kleiner.</td><td class="reg">Ich forme Rundungen und arbeite mit beiden Händen.</td><td class="exp">Ich forme gleichmäßige Rundungen und arbeite gezielt auf meine Form hin.</td></tr>
+          <tr><td><b>Bearbeiten mit der Feile</b></td><td class="min">Ich benutze die Feile und glätte mein Holz etwas.</td><td class="reg">Ich mache mein Werkstück gleichmäßiger.</td><td class="exp">Ich gleiche Unebenheiten aus und arbeite genau an Übergängen.</td></tr>
+          <tr><td><b>Schleifen</b></td><td class="min">Ich schleife mein Holz.</td><td class="reg">Ich schleife mit grobem und feinem Schleifpapier.</td><td class="exp">Ich schleife von grob zu fein und schleife nach dem Anfeuchten noch einmal.</td></tr>
+          <tr><td><b>Ergebnis</b></td><td class="min">Mein Werkstück ist fertig.</td><td class="reg">Mein Handschmeichler ist glatt und liegt gut in der Hand.</td><td class="exp">Mein Werkstück ist sehr glatt, gleichmäßig und sauber gearbeitet.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="slide" data-min="4" data-note="Live-Demo: Erst den Prompt zeigen, dann ein Ergebnis erzeugen lassen. Wichtig: KI erzeugt einen Entwurf, keine fertige Bewertung. Professionelle Prüfung bleibt bei der Fachlehrkraft/Fachschaft.">
+      <div class="kicker">Live-Demo mit KI</div>
+      <h2>Vom Unterrichtsvorhaben zum ersten Raster</h2>
+      <div class="two">
+        <div class="card">
+          <h3>Prompt-Vorlage</h3>
+          <div class="prompt" id="promptText">Erstelle ein knappes SRL-orientiertes Kompetenzraster für [FACH], Jahrgangsstufe [JAHRGANGSSTUFE], zum Thema „[THEMA]“.
+
+Nutze die drei Niveaustufen Mindeststandard, Regelstandard und Expertenstandard. Das Raster soll 5 Kompetenzkategorien enthalten und beobachtbare Kriterien in verständlicher Sprache formulieren. Berücksichtige neben der Ergebnisqualität auch Planung, Strategieeinsatz, Durchführung, Prüfung des Ergebnisses und Reflexion.
+
+Nutze den angehängten Kernlehrplan (KLP) und/oder das schulinterne Curriculum als Grundlage. Falls diese Unterlagen nicht angehängt sind, weise darauf hin, dass der Entwurf fachlich noch mit KLP und schulinternem Curriculum abgeglichen werden muss.</div>
+          <button class="rust" onclick="copyPrompt()">Prompt kopieren</button>
+          <p class="tiny">Platzhalter ersetzen und möglichst KLP und/oder schulinternes Curriculum als Grundlage anhängen.</p>
+        </div>
+        <div class="card">
+          <h3>Prüffragen für KI-Ergebnisse</h3>
+          <ul class="checklist">
+            <li>Sind die Kriterien beobachtbar?</li>
+            <li>Sind die Stufen wirklich unterscheidbar?</li>
+            <li>Ist Selbstregulation sichtbar?</li>
+            <li>Passt es zum Lehrplan und zur Lerngruppe?</li>
+            <li>Ist es für Schüler:innen verständlich?</li>
+            <li>Ist es kurz genug für den Alltag?</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-min="2" data-note="Hier sehr klar den Übergang in die Werkstatt herstellen. Nicht zu viel Arbeitsauftrag, sondern vier mögliche Wege anbieten. Ziel: mindestens eine brauchbare Rasterzeile oder ein Mini-Raster.">
+      <div class="kicker">Weiterarbeit im PZ</div>
+      <h2>Werkstattauftrag: Jetzt selbst ausprobieren</h2>
+      <div class="two">
+        <div class="stage"><h3>Variante A: Einzelne Aufgabe</h3><p>Entwickle 1–3 Rasterzeilen für eine konkrete Aufgabe.</p></div>
+        <div class="stage"><h3>Variante B: Unterrichtsreihe</h3><p>Formuliere 5 zentrale Kompetenzkategorien für eine Reihe.</p></div>
+        <div class="stage"><h3>Variante C: Bewertung</h3><p>Baue ein 0–15-Punkte-Raster aus 5 Kategorien.</p></div>
+        <div class="stage"><h3>Variante D: Fachschaft</h3><p>Entwickelt ein gemeinsames Mini-Raster für ein wiederkehrendes Aufgabenformat.</p></div>
+      </div>
+      <div class="quote">Ziel: ein konkreter erster Baustein für Unterricht oder Fachkonferenz.</div>
+    </section>
+
+    <section class="slide" data-min="2" data-note="Abschluss: Nutzen zusammenfassen. Danach direkt in die Werkstatt leiten. Ggf. Rückfragen zulassen, aber pünktlich übergeben.">
+      <div class="center">
+        <div>
+          <div class="kicker">Kernsatz</div>
+          <h2>Kompetenzraster machen Lernen sichtbar.</h2>
+          <p class="claim">Sie zeigen nicht nur, wie bewertet wird, sondern wie Schüler:innen weiterlernen können.</p>
+          <div class="pillrow" style="justify-content:center;margin-top:1rem">
+            <span class="tag">transparent</span><span class="tag">beobachtbar</span><span class="tag">lehrplanbezogen</span><span class="tag">SRL-orientiert</span><span class="tag">werkstatttauglich</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <aside class="notes" id="notes">
+    <h3>Persönliche Kommentare</h3>
+    <p id="commentSlideLabel" class="hint"></p>
+    <p class="hint">Deine Kommentare werden nur in diesem Browser gespeichert und können als PDF-Druckansicht exportiert werden.</p>
+    <label class="tiny" for="freeNotes">Kommentar zu dieser Folie</label>
+    <textarea id="freeNotes" placeholder="Hier kannst du deine Gedanken, Fragen oder nächsten Schritte notieren..."></textarea>
+    <div class="commentActions">
+      <button class="rust" onclick="exportComments()">PDF-Export starten</button>
+      <button class="secondary" onclick="clearCurrentComment()">Kommentar löschen</button>
+    </div>
+  </aside>
+
+  <nav class="toolbar">
+    <div>
+      <button class="secondary" onclick="prevSlide()">← Zurück</button>
+      <button onclick="nextSlide()">Weiter →</button>
+      <button class="secondary" onclick="toggleNotes()">Kommentare</button>
+      <button class="secondary" onclick="exportComments()">PDF-Export</button>
+    </div>
+    <div>
+      <div class="progress"><div class="bar" id="bar"></div></div>
+      <div class="tiny" id="slideTitle">Folie</div>
+    </div>
+    <div style="display:flex;gap:.45rem;align-items:center;justify-content:flex-end;flex-wrap:wrap">
+      <span class="slideNo" id="slideNo"></span>
+      <span class="timer" id="timer">30:00</span>
+      <button class="secondary" onclick="startTimer()">Start</button>
+      <button class="secondary" onclick="pauseTimer()">Pause</button>
+      <button class="secondary" onclick="resetTimer(30)">30</button>
+      <button class="secondary" onclick="resetTimer(currentSlideMinutes())">Folie</button>
+      <button class="rust" onclick="toggleFull()">Vollbild</button>
+    </div>
+  </nav>
+</div>
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+let idx=0, seconds=30*60, running=false, interval=null;
+const timerEl=document.getElementById('timer'),bar=document.getElementById('bar'),slideNo=document.getElementById('slideNo'),notes=document.getElementById('notes'),slideTitle=document.getElementById('slideTitle'),freeNotes=document.getElementById('freeNotes'),commentSlideLabel=document.getElementById('commentSlideLabel');
+const STORAGE_KEY='kompetenzraster_impuls_kommentare_v1';
+let comments={};
+try{comments=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}')}catch(e){comments={}}
+
+function saveCurrentComment(){
+  if(!freeNotes) return;
+  comments[idx]=freeNotes.value;
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(comments));
+}
+function show(i){
+  saveCurrentComment();
+  idx=(i+slides.length)%slides.length;
+  slides.forEach((s,n)=>s.classList.toggle('active',n===idx));
+  slideNo.textContent=(idx+1)+'/'+slides.length;
+  bar.style.width=((idx+1)/slides.length*100)+'%';
+  slideTitle.textContent=slides[idx].querySelector('h1,h2')?.textContent||'Folie';
+  if(commentSlideLabel) commentSlideLabel.textContent='Folie '+(idx+1)+': '+slideTitle.textContent;
+  if(freeNotes) freeNotes.value=comments[idx]||'';
+}
+function nextSlide(){show(idx+1)}
+function prevSlide(){show(idx-1)}
+function fmt(s){const m=Math.floor(s/60),r=s%60;return String(m).padStart(2,'0')+':'+String(r).padStart(2,'0')}
+function tick(){if(seconds>0){seconds--;timerEl.textContent=fmt(seconds)}else{pauseTimer();timerEl.textContent='00:00';timerEl.style.color='#C0392B'}}
+function startTimer(){if(!running){running=true;timerEl.style.color='var(--slate2)';interval=setInterval(tick,1000)}}
+function pauseTimer(){running=false;clearInterval(interval)}
+function resetTimer(min){pauseTimer();seconds=Math.round(min*60);timerEl.textContent=fmt(seconds);timerEl.style.color='var(--slate2)'}
+function currentSlideMinutes(){return Number(slides[idx].dataset.min||3)}
+function toggleNotes(){notes.classList.toggle('show')}
+function toggleFull(){if(!document.fullscreenElement){document.documentElement.requestFullscreen?.()}else{document.exitFullscreen?.()}}
+function clearCurrentComment(){if(!confirm('Kommentar zu dieser Folie löschen?')) return; if(freeNotes){freeNotes.value=''; saveCurrentComment();}}
+
+async function copyPrompt(){
+  const t=document.getElementById('promptText').innerText;
+  try{await navigator.clipboard.writeText(t);alert('Prompt kopiert.')}
+  catch(e){alert('Kopieren nicht möglich. Bitte manuell markieren.')}
+}
+
+function cleanSlideText(slide){
+  const clone=slide.cloneNode(true);
+  clone.querySelectorAll('button,script,style').forEach(el=>el.remove());
+  let text=clone.innerText.replace(/\n{3,}/g,'\n\n').trim();
+  return text;
+}
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}
+function exportComments(){
+  saveCurrentComment();
+  const date=new Date().toLocaleString('de-DE');
+  const sections=slides.map((slide,n)=>{
+    const title=slide.querySelector('h1,h2')?.innerText || 'Folie '+(n+1);
+    const info=cleanSlideText(slide);
+    const note=(comments[n]||'').trim() || '—';
+    return `<section><h2>Folie ${n+1}: ${escapeHtml(title)}</h2><h3>Infos der Präsentation</h3><pre>${escapeHtml(info)}</pre><h3>Mein Kommentar</h3><p>${escapeHtml(note).replace(/\n/g,'<br>')}</p></section>`;
+  }).join('');
+  const printHtml=`<!doctype html><html lang="de"><head><meta charset="utf-8"><title>Kommentare Kompetenzraster-Impuls</title><style>
+    body{font-family:Arial,sans-serif;color:#1f2933;margin:24px;line-height:1.35}
+    h1{color:#263947;margin-bottom:4px} h2{color:#3E5668;border-top:2px solid #d8ddd9;padding-top:16px;margin-top:24px}
+    h3{color:#D97A4A;margin-bottom:6px} pre{white-space:pre-wrap;background:#f5f4f1;border:1px solid #d8ddd9;border-radius:10px;padding:12px;font-family:Arial,sans-serif}
+    section{break-inside:avoid;page-break-inside:avoid} @media print{button{display:none}}
+  </style></head><body><button onclick="window.print()">Als PDF drucken / speichern</button><h1>Kommentare zum Impuls „Kompetenzraster“</h1><p>Export erstellt am ${escapeHtml(date)}</p>${sections}<script>setTimeout(()=>window.print(),400)<\/script></body></html>`;
+  const w=window.open('','_blank');
+  if(!w){alert('Popup wurde blockiert. Bitte Popups erlauben oder erneut versuchen.'); return;}
+  w.document.open(); w.document.write(printHtml); w.document.close();
+}
+
+if(freeNotes){
+  freeNotes.addEventListener('input',()=>{comments[idx]=freeNotes.value;localStorage.setItem(STORAGE_KEY,JSON.stringify(comments));});
+}
+document.addEventListener('keydown',e=>{
+  if(e.target && ['TEXTAREA','INPUT'].includes(e.target.tagName)) return;
+  if(e.key==='ArrowRight'||e.key===' '){nextSlide()}
+  if(e.key==='ArrowLeft'){prevSlide()}
+  if(e.key.toLowerCase()==='n'){toggleNotes()}
+  if(e.key.toLowerCase()==='f'){toggleFull()}
+  if(e.key.toLowerCase()==='t'){resetTimer(currentSlideMinutes());startTimer()}
+});
+show(0);timerEl.textContent=fmt(seconds);
+</script>
+</body>
+</html>
