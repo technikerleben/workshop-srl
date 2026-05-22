@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blüte: Zwei Jahre SRL im Deutschunterricht</title>
+  <style>
+    :root{
+      --slate:#3E5668;
+      --slate-dark:#263946;
+      --rust:#D97A4A;
+      --sage:#7DBB6F;
+      --cream:#F5F4F1;
+      --paper:#FFFFFF;
+      --ink:#18242d;
+      --muted:#687782;
+      --lilac:#8D72C7;
+      --rose:#F2C9D4;
+      --blue:#74A9D8;
+      --green:#8FCC83;
+      --shadow: 0 18px 45px rgba(20,32,40,.18);
+      --radius:24px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:#EEF3F7;color:var(--ink);}
+    body{overflow:hidden}
+    a{color:inherit}
+    .app{height:100vh;display:grid;grid-template-columns:280px 1fr;gap:18px;padding:18px;overflow:hidden;}
+    .panel{background:rgba(255,255,255,.78);backdrop-filter: blur(12px);border:1px solid rgba(62,86,104,.14);box-shadow:0 10px 30px rgba(30,45,55,.08);border-radius:var(--radius);overflow:hidden;}
+    .nav{display:flex;flex-direction:column;min-height:0;}
+    .brand{padding:22px 22px 18px;border-bottom:1px solid rgba(62,86,104,.12);background:var(--slate);color:white;}
+    .brand .tag{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;opacity:.8;margin-bottom:8px}
+    .brand h1{font-size:1.35rem;line-height:1.15;margin:0 0 8px;font-weight:800;}
+    .brand p{margin:0;font-size:.9rem;opacity:.88;line-height:1.35}
+    .slides-list{padding:12px;overflow:auto;}
+    .nav-btn{width:100%;text-align:left;border:0;background:transparent;border-radius:16px;padding:12px 12px;margin:3px 0;display:grid;grid-template-columns:28px 1fr;gap:9px;cursor:pointer;color:var(--ink);}
+    .nav-btn:hover{background:#eef3f7}
+    .nav-btn.active{background:#EEF3F7;outline:2px solid rgba(62,86,104,.22)}
+    .nav-no{height:26px;width:26px;border-radius:999px;background:var(--slate);color:white;display:grid;place-items:center;font-weight:800;font-size:.8rem;}
+    .nav-btn.active .nav-no{background:var(--rust)}
+    .nav-title{font-weight:750;font-size:.92rem;line-height:1.2}.nav-sub{grid-column:2;font-size:.78rem;color:var(--muted);margin-top:-3px;line-height:1.25}
+    .main{display:grid;grid-template-rows:minmax(0,1fr) auto auto;min-width:0;min-height:0;}
+    .toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;margin-top:10px;position:relative;z-index:30;}
+    .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.btn{border:0;border-radius:999px;padding:10px 14px;font-weight:800;cursor:pointer;background:#fff;color:var(--slate-dark);box-shadow:0 6px 16px rgba(30,45,55,.08);border:1px solid rgba(62,86,104,.12)}
+    .btn:hover{transform:translateY(-1px)}.btn.primary{background:var(--slate);color:white}.btn.rust{background:var(--rust);color:white}.btn.ghost{background:rgba(255,255,255,.55)}
+    .timer{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:999px;background:white;border:1px solid rgba(62,86,104,.12);box-shadow:0 6px 16px rgba(30,45,55,.08)}
+    .time{font-variant-numeric:tabular-nums;font-size:1.4rem;font-weight:900;color:var(--slate-dark);min-width:78px;text-align:center}.dot{width:10px;height:10px;border-radius:50%;background:var(--sage);box-shadow:0 0 0 5px rgba(125,187,111,.14)}.dot.paused{background:var(--rust);box-shadow:0 0 0 5px rgba(217,122,74,.14)}
+    .slide-wrap{position:relative;min-height:0;display:flex;overflow:hidden;}
+    .slide{background:var(--paper);border-radius:28px;box-shadow:var(--shadow);padding:48px 56px;overflow:auto;width:100%;height:100%;display:none;border:1px solid rgba(62,86,104,.12);position:relative;}
+    .slide.active{display:block;animation:fade .22s ease-out}@keyframes fade{from{opacity:.2;transform:translateY(6px)}to{opacity:1;transform:none}}
+    .slide::before{content:"";position:absolute;inset:0 0 auto 0;height:8px;background:var(--slate);border-radius:28px 28px 0 0}
+    .kicker{font-size:.9rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:var(--rust);margin-bottom:14px}.slide h2{font-size:clamp(2rem,3.4vw,4rem);line-height:1.02;margin:0 0 22px;color:var(--slate-dark);letter-spacing:-.04em}.slide h3{font-size:1.45rem;margin:26px 0 12px;color:var(--slate)}
+    .lead{font-size:1.45rem;line-height:1.38;color:#2b3b46;max-width:980px}.big-quote{font-size:clamp(1.6rem,2.5vw,3rem);line-height:1.16;font-weight:850;color:var(--slate-dark);max-width:1000px;margin:34px 0}.big-quote em{color:var(--rust);font-style:normal}.muted{color:var(--muted)}
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:26px}.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}.grid.four{grid-template-columns:repeat(4,minmax(0,1fr))}.card{background:#f8fafb;border:1px solid rgba(62,86,104,.12);border-radius:22px;padding:22px;box-shadow:0 8px 18px rgba(30,45,55,.06)}.card h4{margin:0 0 10px;font-size:1.1rem;color:var(--slate-dark)}.card p,.card li{font-size:1rem;line-height:1.45;color:#31424f}.card ul{padding-left:1.15rem;margin:0}.pill{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:8px 12px;background:rgba(62,86,104,.09);font-weight:850;color:var(--slate-dark);margin:4px 6px 4px 0}.pill.rust{background:rgba(217,122,74,.14);color:#8d3e1c}.pill.sage{background:rgba(125,187,111,.17);color:#315d29}.pill.lilac{background:rgba(141,114,199,.16);color:#5c458d}
+    .timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:34px;align-items:stretch}.step{position:relative;background:#fff;border:1px solid rgba(62,86,104,.14);border-radius:26px;padding:24px;box-shadow:0 10px 24px rgba(30,45,55,.07)}.step .num{height:42px;width:42px;border-radius:14px;background:var(--slate);color:white;display:grid;place-items:center;font-weight:900;margin-bottom:14px}.step:nth-child(2) .num{background:var(--lilac)}.step:nth-child(3) .num{background:var(--rust)}.step h4{font-size:1.25rem;margin:0 0 8px}.step p{font-size:1.02rem;line-height:1.45;color:#3b4a55}
+    .link-card{display:flex;align-items:center;justify-content:space-between;gap:20px;background:linear-gradient(135deg,#fff,#f8fafb);border:1px solid rgba(62,86,104,.14);border-radius:24px;padding:20px 22px;margin:12px 0;text-decoration:none;box-shadow:0 9px 20px rgba(30,45,55,.06)}.link-card:hover{outline:3px solid rgba(217,122,74,.25)}.link-card strong{font-size:1.18rem;color:var(--slate-dark)}.link-card span{display:block;color:var(--muted);font-size:.95rem;margin-top:4px}.arrow{font-size:1.7rem;color:var(--rust)}
+    .footerbar{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;margin-top:10px;position:relative;z-index:25}.progress{height:10px;background:rgba(62,86,104,.12);border-radius:999px;overflow:hidden;flex:1;margin:0 14px}.progress-fill{height:100%;background:var(--slate);width:0}.small{font-size:.9rem;color:var(--muted);font-weight:750}.notes{position:fixed;right:18px;top:18px;bottom:118px;width:min(420px,calc(100vw - 36px));display:grid;grid-template-rows:auto 1fr auto;min-height:0;z-index:20;transform:translateX(calc(100% + 28px));transition:transform .22s ease;box-shadow:0 22px 60px rgba(20,32,40,.24)}.notes.open{transform:translateX(0)}.notes-head{padding:20px 20px 14px;background:linear-gradient(135deg,#fff,#f7fafb);border-bottom:1px solid rgba(62,86,104,.12)}.notes-head h2{font-size:1.2rem;margin:0 0 6px;color:var(--slate-dark)}.notes-head p{margin:0;color:var(--muted);font-size:.9rem;line-height:1.35}.note-area{padding:16px;display:flex;flex-direction:column;gap:12px;min-height:0}.note-label{font-weight:900;color:var(--slate-dark);font-size:.9rem}textarea{width:100%;flex:1;min-height:180px;resize:none;border-radius:20px;border:1px solid rgba(62,86,104,.18);padding:16px;font:inherit;font-size:1rem;line-height:1.4;outline:none;background:white;color:var(--ink)}textarea:focus{border-color:var(--rust);box-shadow:0 0 0 4px rgba(217,122,74,.15)}.note-actions{padding:14px 16px 18px;display:grid;grid-template-columns:1fr 1fr;gap:8px}.notes-close{position:absolute;right:14px;top:14px;border:0;border-radius:999px;width:34px;height:34px;background:#EEF3F7;color:var(--slate-dark);font-weight:900;cursor:pointer}.hint{font-size:.82rem;color:var(--muted);line-height:1.35;margin-top:6px}.comparison{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px}.before,.after{border-radius:24px;padding:24px}.before{background:#f3f5f6;border:1px dashed rgba(62,86,104,.35)}.after{background:linear-gradient(135deg,rgba(125,187,111,.15),rgba(116,169,216,.13));border:1px solid rgba(125,187,111,.35)}.before h4,.after h4{font-size:1.3rem;margin:0 0 12px;color:var(--slate-dark)}
+    .print-only{display:none}
+    @media (max-width:1100px){.app{grid-template-columns:1fr;height:100vh;overflow:hidden;padding:12px}.nav{display:none}.main{height:calc(100vh - 24px);min-height:0}.slide{padding:34px 28px}.grid,.grid.two,.grid.four,.timeline,.comparison{grid-template-columns:1fr}.toolbar{align-items:flex-start;flex-direction:column}.timer{width:100%;justify-content:space-between}.notes{bottom:170px}}
+    @media print{
+      body{overflow:visible;background:white}.app{display:block;height:auto;padding:0}.nav,.toolbar,.footerbar,.notes{display:none}.slide{display:block!important;height:auto;page-break-after:always;box-shadow:none;border:0;border-radius:0;padding:28mm 18mm}.slide::before{border-radius:0}.print-only{display:block}.no-print{display:none}.grid,.grid.two,.grid.four,.timeline,.comparison{break-inside:avoid}.card,.step,.link-card{break-inside:avoid;box-shadow:none}.slide h2{font-size:30pt}.lead{font-size:15pt}.big-quote{font-size:22pt}.print-notes{page-break-before:always;padding:20mm;font-family:Inter,Segoe UI,Arial,sans-serif}.print-notes h1{font-size:24pt;color:#263946}.print-note{border:1px solid #ccc;border-radius:12px;padding:12px;margin:12px 0}.print-note h3{margin:0 0 8px;color:#3E5668}.print-note p{white-space:pre-wrap;line-height:1.4}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="panel nav">
+      <div class="brand">
+        <div class="tag">Blüte · SRL</div>
+        <h1>Zwei Jahre Veränderung im Lernen</h1>
+        <p>Erfahrungen aus Klasse 9 und 10 – von Stadtlyrik bis ZP-Vorbereitung</p>
+      </div>
+      <div class="slides-list" id="slideNav"></div>
+    </aside>
+
+    <main class="main">
+      <div class="slide-wrap" id="slides">
+        <section class="slide active" data-title="Einstieg" data-sub="Worum es in dieser Blüte geht">
+          <div class="kicker">Best-Practice-Blüte</div>
+          <h2>Zwei Jahre Selbstregulation im Deutschunterricht</h2>
+          <p class="lead">Ein Erfahrungsbericht aus Klasse 9 und 10: vom ersten deutlich geöffneten Reihenformat zur Stadtlyrik bis zur selbstregulierten Vorbereitung auf die ZP10.</p>
+          <div class="big-quote">Nicht: <em>„Die machen jetzt einfach allein.“</em><br> Sondern: Lernen wird sichtbarer, planbarer und besprechbarer.</div>
+          <div>
+            <span class="pill sage">Stadtlyrik Klasse 9</span>
+            <span class="pill lilac">Politische Reden Klasse 10</span>
+            <span class="pill rust">ZP-Vorbereitung</span>
+          </div>
+        </section>
+
+        <section class="slide" data-title="Leitfrage" data-sub="Der rote Faden">
+          <div class="kicker">Leitfrage</div>
+          <h2>Wie viel Freiheit trägt Unterricht?</h2>
+          <p class="lead">Die zentrale Frage war nicht, ob Unterricht offener werden kann. Die Frage war: Welche Struktur brauchen Schüler:innen, damit sie mit mehr Verantwortung fachlich sinnvoll umgehen können?</p>
+          <div class="comparison">
+            <div class="before">
+              <h4>Risiko bei falsch verstandener Offenheit</h4>
+              <p>Schüler:innen arbeiten Aufgaben ab, verlieren Orientierung oder wählen den einfachsten Weg.</p>
+            </div>
+            <div class="after">
+              <h4>Ziel der Veränderung</h4>
+              <p>Schüler:innen planen, wählen begründet, nutzen Feedback und reflektieren ihre nächsten Schritte.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide" data-title="Entwicklungsbogen" data-sub="Von der Reihe zum System">
+          <div class="kicker">Entwicklung</div>
+          <h2>Vom Experiment zum System</h2>
+          <div class="timeline">
+            <div class="step">
+              <div class="num">1</div>
+              <h4>Stadtlyrik Klasse 9</h4>
+              <p>Erste deutlich selbstregulierte Unterrichtsreihe mit Taskcard, Modulen, Wahlmöglichkeiten, digitalen Hilfen und Reflexion.</p>
+            </div>
+            <div class="step">
+              <div class="num">2</div>
+              <h4>Analyse politischer Reden</h4>
+              <p>Weiterentwicklung: stärkerer fachlicher Aufbau, klarere Analysewege, mehr gemeinsame Sicherung und gezielte Unterstützung.</p>
+            </div>
+            <div class="step">
+              <div class="num">3</div>
+              <h4>ZP-Vorbereitung</h4>
+              <p>Reiferes System aus Themenmodulen, Lernplaner, Feedbackgesprächen, Vorbereitungsheft und Pinnwand.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide" data-title="Stadtlyrik" data-sub="Der erste große Schritt">
+          <div class="kicker">Unterrichtsreihe 1</div>
+          <h2>Stadtlyrik: erste echte Öffnung</h2>
+          <p class="lead">Die Reihe war der erste große Versuch, eine komplette Unterrichtsreihe stärker über Lernziele, Pflichtmodule, Vertiefungen und digitale Unterstützung zu organisieren.</p>
+          <div class="grid two">
+            <div class="card">
+              <h4>Was neu war</h4>
+              <ul>
+                <li>zentrale Taskcard als Lernumgebung</li>
+                <li>Module statt linearer Aufgabenfolge</li>
+                <li>Vergleich von Gedichten und Songs</li>
+                <li>freiere Arbeitswege mit Pflichtbasis</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h4>Was daraus gelernt wurde</h4>
+              <ul>
+                <li>Offenheit braucht klare Mindeststandards</li>
+                <li>Reflexion muss eingeübt werden</li>
+                <li>gemeinsame Erklärphasen bleiben wichtig</li>
+                <li>digitale Hilfen ersetzen keine Lernberatung</li>
+              </ul>
+            </div>
+          </div>
+          <a class="link-card" href="https://schulendortmund.taskcards.app/#/board/058147c8-bf67-42ca-808c-727a3b6f76c8?token=6aed81ce-dd0f-4f8b-9a15-f8654e28666e" target="_blank" rel="noopener">
+            <div><strong>Taskcard öffnen: Stadtlyrik Klasse 9</strong><span>Materialstruktur und Arbeitsumgebung zeigen</span></div><div class="arrow">↗</div>
+          </a>
+        </section>
+
+        <section class="slide" data-title="Politische Reden" data-sub="Strukturierter weiterentwickelt">
+          <div class="kicker">Unterrichtsreihe 2</div>
+          <h2>Politische Reden: mehr Struktur im offenen Arbeiten</h2>
+          <p class="lead">Nach der Stadtlyrik wurde deutlicher: Selbstregulation bedeutet nicht weniger Anleitung. Die Anleitung verändert ihre Form.</p>
+          <div class="grid three">
+            <div class="card"><h4>Fachlicher Kern</h4><p>Analyse politischer Reden mit Blick auf Situation, Absicht, Aufbau, Sprache und Wirkung.</p></div>
+            <div class="card"><h4>Didaktischer Schritt</h4><p>Mehr gemeinsame Orientierung, klarere Teilschritte und bessere Rückbindung an Kriterien.</p></div>
+            <div class="card"><h4>SRL-Lerngewinn</h4><p>Die Schüler:innen mussten Entscheidungen fachlich begründen: Was analysiere ich? Warum? Mit welchem Ziel?</p></div>
+          </div>
+          <a class="link-card" href="https://schulendortmund.taskcards.app/#/board/e30b85de-8734-49ef-bbee-d715cc2fa224/view?permissionId=003a562b-51c1-4878-a0f2-50e1af794ca2" target="_blank" rel="noopener">
+            <div><strong>Taskcard öffnen: Analyse politischer Reden Klasse 10</strong><span>Weiterentwicklung der Arbeitsstruktur zeigen</span></div><div class="arrow">↗</div>
+          </a>
+        </section>
+
+        <section class="slide" data-title="ZP-Vorbereitung" data-sub="SRL unter Prüfungsdruck">
+          <div class="kicker">Prüfungsvorbereitung</div>
+          <h2>Kann SRL tragen, wenn es ernst wird?</h2>
+          <p class="lead">Die ZP-Vorbereitung war der Punkt, an dem aus Einzelideen ein zusammenhängendes System wurde: Diagnose, Planung, Übung, Feedback und Reflexion griffen sichtbar ineinander.</p>
+          <div class="grid two">
+            <div class="card"><h4>Struktur durch Themenmodule</h4><p>LV, LA, SV und IS wurden als überschaubare Lernbereiche organisiert. Die Schüler:innen konnten gezielter auswählen, woran sie arbeiten.</p></div>
+            <div class="card"><h4>Offen, aber nicht beliebig</h4><p>Die Pinnwand gab Wege vor, das Vorbereitungsheft bündelte Sicherungen, Strategien und Arbeitsstände.</p></div>
+          </div>
+          <a class="link-card" href="https://schulendortmund.taskcards.app/#/board/d0ee3f02-7683-4dea-ad2d-b142afd0dd38?token=2e768c0c-d78a-400a-979c-6fbcfd477a8e" target="_blank" rel="noopener">
+            <div><strong>Taskcard öffnen: ZP-Vorbereitung</strong><span>Module, Lernwege und digitale Struktur zeigen</span></div><div class="arrow">↗</div>
+          </a>
+        </section>
+
+        <section class="slide" data-title="Lernplaner" data-sub="Planung und Exit-Ticket">
+          <div class="kicker">ZP-Baustein 1</div>
+          <h2>Lernplaner: Planen und reflektieren</h2>
+          <p class="lead">Der Lernplaner rahmte Arbeitsphasen: Am Anfang wurde bewusst geplant, am Ende wurde über ein Exit-Ticket reflektiert.</p>
+          <div class="grid two">
+            <div class="card">
+              <h4>Vor der Arbeitsphase</h4>
+              <ul>
+                <li>Was ist heute mein Ziel?</li>
+                <li>Welches Modul passt zu meinem Bedarf?</li>
+                <li>Welche Aufgabe ist realistisch?</li>
+                <li>Woran erkenne ich am Ende Fortschritt?</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h4>Nach der Arbeitsphase</h4>
+              <ul>
+                <li>Was habe ich geschafft?</li>
+                <li>Was hat gut funktioniert?</li>
+                <li>Wo brauche ich Unterstützung?</li>
+                <li>Was ist mein nächster sinnvoller Schritt?</li>
+              </ul>
+            </div>
+          </div>
+          <div class="big-quote">Der Lernplaner macht aus Arbeitszeit eine <em>bewusste Lernzeit</em>.</div>
+        </section>
+
+        <section class="slide" data-title="Feedbackgespräche" data-sub="Regelmäßige Lernberatung">
+          <div class="kicker">ZP-Baustein 2</div>
+          <h2>Feedbackgespräche: Verantwortung braucht Resonanz</h2>
+          <p class="lead">Regelmäßige kurze Gespräche halfen, Selbsteinschätzung, Leistungsstand und nächste Schritte miteinander abzugleichen.</p>
+          <div class="grid three">
+            <div class="card"><h4>Diagnose</h4><p>Wo stehst du gerade? Was zeigen Aufgaben, Probetexte und Rückmeldungen?</p></div>
+            <div class="card"><h4>Orientierung</h4><p>Welcher Lernbereich ist jetzt am wichtigsten: LV, LA, SV oder IS?</p></div>
+            <div class="card"><h4>Verbindlichkeit</h4><p>Welche konkrete Aufgabe nimmst du dir bis zum nächsten Gespräch vor?</p></div>
+          </div>
+          <p class="lead" style="margin-top:28px">Das Gespräch wurde damit nicht zur Zusatzleistung, sondern zum Motor der Selbstregulation.</p>
+        </section>
+
+        <section class="slide" data-title="Pinnwand + Heft" data-sub="Digitale und analoge Struktur">
+          <div class="kicker">ZP-Baustein 3</div>
+          <h2>Pinnwand und Vorbereitungsheft greifen ineinander</h2>
+          <p class="lead">Die Taskcard zeigte Wege, Materialien und Aufgaben. Das Heft sammelte Sicherungen, Strategien und persönliche Lernspuren.</p>
+          <div class="comparison">
+            <div class="before">
+              <h4>Pinnwand</h4>
+              <p>Digitale Orientierung: Module, Aufgaben, Links, Hilfen, Übungsformate und Reihenfolge.</p>
+              <div><span class="pill">LV</span><span class="pill">LA</span><span class="pill">SV</span><span class="pill">IS</span></div>
+            </div>
+            <div class="after">
+              <h4>Vorbereitungsheft</h4>
+              <p>Analoge Verankerung: Strategien, Checklisten, Beispiele, eigene Notizen, Rückmeldungen und nächste Schritte.</p>
+              <div><span class="pill sage">Sichern</span><span class="pill lilac">Üben</span><span class="pill rust">Reflektieren</span></div>
+            </div>
+          </div>
+          <div class="big-quote">Digital organisiert. Analog verankert. Persönlich genutzt.</div>
+        </section>
+
+        <section class="slide" data-title="Ergebnisse" data-sub="Vorsichtig einordnen">
+          <div class="kicker">Ausblick auf ZP-Ergebnisse</div>
+          <h2>Was zeigen die vermutlichen Ergebnisse?</h2>
+          <p class="lead">Die ZP-Ergebnisse sollten nicht als einfache Ursache-Wirkung-Erzählung präsentiert werden. Spannend ist vor allem, ob die Arbeitsweise Lernprozesse stabilisiert, Selbsteinschätzung verbessert und gezielteres Üben ermöglicht hat.</p>
+          <div class="grid three">
+            <div class="card"><h4>Leistung</h4><p>Wie liegen die Ergebnisse im Verhältnis zu vorherigen Arbeiten, Probe-ZP und Erwartungen?</p></div>
+            <div class="card"><h4>Lernprozess</h4><p>Konnten Schüler:innen genauer sagen, was sie können und was sie üben müssen?</p></div>
+            <div class="card"><h4>Prüfungssicherheit</h4><p>Hat die Kombination aus Struktur und Wahlmöglichkeiten Sicherheit gegeben?</p></div>
+          </div>
+        </section>
+
+        <section class="slide" data-title="Schüler:innenstimmen" data-sub="Feedback nach zwei Jahren">
+          <div class="kicker">Feedback</div>
+          <h2>Was sagen die Schüler:innen?</h2>
+          <p class="lead">Der Abschluss der Blüte: nicht nur über Schüler:innen sprechen, sondern ihre Perspektive sichtbar machen.</p>
+          <div class="grid two">
+            <div class="card"><h4>Mögliche Verdichtung</h4><p>Viele Rückmeldungen bewerten den Prozess sehr positiv: mehr Überblick, mehr Verantwortung, bessere Vorbereitung und das Gefühl, individueller arbeiten zu können.</p></div>
+            <div class="card"><h4>O-Töne einbauen</h4><p>Hier können kurze Zitate, Audioausschnitte oder anonymisierte Rückmeldungen eingeblendet werden.</p></div>
+          </div>
+          <a class="link-card" href="https://forms.office.com/Pages/AnalysisPage.aspx?AnalyzerToken=PBIVeYRnh1CpF4vD0PYtQRF6M79cZoYC&id=ztracBomw0SzDGCTXTgnnNUGthZNT0ZFgpKBUSH2WoZURDRHM1A2TUZSOEExUUZDSlk3M0dDWDBOUC4u" target="_blank" rel="noopener">
+            <div><strong>Feedback-Ergebnisse öffnen</strong><span>Microsoft Forms-Auswertung für alle sichtbar machen</span></div><div class="arrow">↗</div>
+          </a>
+          <div class="big-quote">Der wichtigste Effekt: Schüler:innen können besser über ihr eigenes Lernen sprechen.</div>
+        </section>
+
+        <section class="slide" data-title="Was bleibt?" data-sub="Übertragbare Gedanken">
+          <div class="kicker">Fazit</div>
+          <h2>Mehr Freiheit braucht mehr Struktur</h2>
+          <div class="grid three">
+            <div class="card"><h4>1. Klein anfangen</h4><p>Ein Modul, eine Wahlmöglichkeit, ein Reflexionsmoment – nicht sofort die ganze Reihe umbauen.</p></div>
+            <div class="card"><h4>2. Sichtbar machen</h4><p>Lernziele, Standards, Aufgabenwege und nächste Schritte müssen für Schüler:innen erkennbar sein.</p></div>
+            <div class="card"><h4>3. Begleiten</h4><p>Selbstregulation wächst durch Feedback, Gespräche und wiederkehrende Routinen.</p></div>
+          </div>
+          <div class="big-quote">Selbstregulation ist kein Rückzug der Lehrkraft. Sie ist eine andere Form von Führung.</div>
+        </section>
+
+        <section class="slide" data-title="Austausch" data-sub="Fragen an Kolleg:innen">
+          <div class="kicker">Gesprächsimpuls</div>
+          <h2>Was wäre eure kleinste sinnvolle Öffnung?</h2>
+          <p class="lead">Zum Abschluss können Kolleg:innen eine konkrete Übertragung für den eigenen Unterricht notieren.</p>
+          <div class="grid two">
+            <div class="card"><h4>Nachdenken</h4><ul><li>Wo arbeiten Schüler:innen bisher nur Aufgaben ab?</li><li>Wo könnte eine bewusste Planungsphase helfen?</li><li>Welche Rückmeldung würde den nächsten Schritt klären?</li></ul></div>
+            <div class="card"><h4>Mitnehmen</h4><ul><li>ein Modul statt einer ganzen Reihe</li><li>ein Exit-Ticket statt großer Reflexionsbögen</li><li>ein kurzes Feedbackgespräch statt langer Korrekturkommentare</li></ul></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="panel footerbar">
+        <span class="small" id="slideCounter">1 / 13</span>
+        <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+        <span class="small">← → Folien · F Vollbild · K Kommentare</span>
+      </div>
+      <div class="panel toolbar">
+        <div class="controls">
+          <button class="btn primary" id="prevBtn">← Zurück</button>
+          <button class="btn primary" id="nextBtn">Weiter →</button>
+          <button class="btn ghost" id="fullscreenBtn">Vollbild</button>
+          <button class="btn rust" id="printBtn">PDF-Export</button>
+          <button class="btn ghost" id="toggleNotesBtn">Kommentare</button>
+        </div>
+        <div class="timer" aria-label="30 Minuten Timer">
+          <span class="dot paused" id="timerDot"></span>
+          <span class="time" id="timeDisplay">30:00</span>
+          <button class="btn" id="startPauseBtn">Start</button>
+          <button class="btn" id="resetBtn">Reset</button>
+        </div>
+      </div>
+
+    </main>
+
+    <aside class="panel notes" id="notesPanel">
+      <div class="notes-head">
+        <button class="notes-close" id="closeNotesBtn" title="Kommentare schließen">×</button>
+        <h2>Meine Notizen</h2>
+        <p>Für Kolleg:innen auf dem eigenen Gerät. Die Notizen bleiben lokal im Browser gespeichert und erscheinen im PDF-Export.</p>
+      </div>
+      <div class="note-area">
+        <div class="note-label" id="noteSlideTitle">Notiz zu Folie 1</div>
+        <textarea id="noteBox" placeholder="Gedanken, Rückfragen, Übertragungsideen …"></textarea>
+        <div class="hint">Tipp: Beim PDF-Export werden alle Folien und alle ausgefüllten Notizen in einer Druckansicht gesammelt.</div>
+      </div>
+      <div class="note-actions">
+        <button class="btn" id="clearNoteBtn">Notiz löschen</button>
+        <button class="btn rust" id="printBtn2">PDF-Export</button>
+      </div>
+    </aside>
+  </div>
+  <div id="printNotes" class="print-only print-notes"></div>
+
+<script>
+(function(){
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const nav = document.getElementById('slideNav');
+  const counter = document.getElementById('slideCounter');
+  const progress = document.getElementById('progressFill');
+  const noteBox = document.getElementById('noteBox');
+  const noteTitle = document.getElementById('noteSlideTitle');
+  const notesPanel = document.getElementById('notesPanel');
+  const storageKey = 'bluete-srl-notes-v1';
+  let current = 0;
+  let notes = JSON.parse(localStorage.getItem(storageKey) || '{}');
+
+  slides.forEach((s,i)=>{
+    const btn=document.createElement('button');
+    btn.className='nav-btn';
+    btn.innerHTML=`<div class="nav-no">${i+1}</div><div class="nav-title">${s.dataset.title}</div><div class="nav-sub">${s.dataset.sub||''}</div>`;
+    btn.addEventListener('click',()=>go(i));
+    nav.appendChild(btn);
+  });
+  const navBtns = Array.from(document.querySelectorAll('.nav-btn'));
+
+  function saveNote(){ notes[current]=noteBox.value; localStorage.setItem(storageKey, JSON.stringify(notes)); }
+  function go(i){
+    saveNote();
+    current = Math.max(0, Math.min(slides.length-1, i));
+    slides.forEach((s,idx)=>s.classList.toggle('active',idx===current));
+    navBtns.forEach((b,idx)=>b.classList.toggle('active',idx===current));
+    counter.textContent = `${current+1} / ${slides.length}`;
+    progress.style.width = `${((current+1)/slides.length)*100}%`;
+    noteTitle.textContent = `Notiz zu Folie ${current+1}: ${slides[current].dataset.title}`;
+    noteBox.value = notes[current] || '';
+  }
+
+  document.getElementById('prevBtn').addEventListener('click',()=>go(current-1));
+  document.getElementById('nextBtn').addEventListener('click',()=>go(current+1));
+  document.getElementById('clearNoteBtn').addEventListener('click',()=>{noteBox.value=''; saveNote();});
+  noteBox.addEventListener('input', saveNote);
+
+  document.addEventListener('keydown',e=>{
+    if(e.target.tagName==='TEXTAREA') return;
+    if(e.key==='ArrowRight' || e.key==='PageDown') go(current+1);
+    if(e.key==='ArrowLeft' || e.key==='PageUp') go(current-1);
+    if(e.key.toLowerCase()==='f') toggleFullScreen();
+    if(e.key.toLowerCase()==='k') toggleNotes();
+  });
+
+  function toggleFullScreen(){
+    if(!document.fullscreenElement){ document.documentElement.requestFullscreen?.(); }
+    else{ document.exitFullscreen?.(); }
+  }
+  document.getElementById('fullscreenBtn').addEventListener('click', toggleFullScreen);
+  function toggleNotes(){ notesPanel.classList.toggle('open'); if(notesPanel.classList.contains('open')) noteBox.focus(); }
+  document.getElementById('toggleNotesBtn').addEventListener('click', toggleNotes);
+  document.getElementById('closeNotesBtn').addEventListener('click', ()=>notesPanel.classList.remove('open')); 
+
+  // Timer
+  let total = 30*60;
+  let remaining = total;
+  let running = false;
+  let timerId = null;
+  const display = document.getElementById('timeDisplay');
+  const dot = document.getElementById('timerDot');
+  const startPause = document.getElementById('startPauseBtn');
+  function renderTime(){
+    const m = Math.floor(remaining/60).toString().padStart(2,'0');
+    const s = Math.floor(remaining%60).toString().padStart(2,'0');
+    display.textContent = `${m}:${s}`;
+    dot.classList.toggle('paused',!running);
+    startPause.textContent = running ? 'Pause' : 'Start';
+  }
+  function tick(){
+    if(remaining>0){ remaining--; renderTime(); }
+    else{ running=false; clearInterval(timerId); timerId=null; renderTime(); alert('Die 30 Minuten sind vorbei.'); }
+  }
+  startPause.addEventListener('click',()=>{
+    running=!running;
+    if(running && !timerId) timerId=setInterval(tick,1000);
+    if(!running && timerId){ clearInterval(timerId); timerId=null; }
+    renderTime();
+  });
+  document.getElementById('resetBtn').addEventListener('click',()=>{running=false; clearInterval(timerId); timerId=null; remaining=total; renderTime();});
+
+  function buildPrintNotes(){
+    saveNote();
+    const filled = Object.entries(notes).filter(([_,v]) => v && v.trim().length);
+    const box = document.getElementById('printNotes');
+    let html = '<h1>Notizen zur Blüte: Zwei Jahre SRL im Deutschunterricht</h1>';
+    if(!filled.length){ html += '<p>Keine Notizen eingetragen.</p>'; }
+    filled.forEach(([idx,text])=>{
+      const s = slides[Number(idx)];
+      html += `<div class="print-note"><h3>Folie ${Number(idx)+1}: ${s.dataset.title}</h3><p>${escapeHtml(text)}</p></div>`;
+    });
+    box.innerHTML = html;
+  }
+  function escapeHtml(str){ return str.replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\'':'&#39;','"':'&quot;'}[c])); }
+  function printPdf(){ buildPrintNotes(); window.print(); }
+  document.getElementById('printBtn').addEventListener('click', printPdf);
+  document.getElementById('printBtn2').addEventListener('click', printPdf);
+
+  go(0); renderTime();
+})();
+</script>
+</body>
+</html>
