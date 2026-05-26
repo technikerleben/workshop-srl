@@ -1411,7 +1411,7 @@ ul.clean li::before {
     </div>
 
     <!-- BILD · Slide 5 — folie5.png -->
-    <div class="image-slot" style="aspect-ratio: 3/2; max-width: 720px; margin: 28px auto 0;">
+    <div class="image-slot image-slot--3x1" style="margin-top: 28px;">
       <img class="image-slot__img" src="folie5.png" alt="Aufgabe in drei Niveaustufen">
     </div>
   </div>
@@ -1670,44 +1670,27 @@ ul.clean li::before {
 <section class="slide" id="s12" data-phase="5" data-title="Material-Pool">
   <div class="slide-inner">
     <span class="slide-eyebrow">Material-Pool</span>
-    <h2 class="slide-title">Alles, was du heute gesehen hast — zum Mitnehmen.</h2>
+    <h2 class="slide-title">Drei Produkte aus dem Workshop — zum Mitnehmen.</h2>
+    <p class="lead" style="text-align: center; max-width: 760px; margin: 0 auto 28px;">Alles, was wir heute gemeinsam live erstellt haben, scannbar an einem Ort.</p>
 
     <div class="qr-pool">
       <div class="qr-pool__item">
-        <div class="qr-pool__qr" data-qr-render="prompt_karte_pdf">
+        <div class="qr-pool__qr" data-qr-render="live_aufgabe">
           <div class="qr-pool__qr--empty">URL fehlt</div>
         </div>
-        <div class="qr-pool__label">Prompt-Karte<br>(Differenzierung)</div>
+        <div class="qr-pool__label">Säule 1<br>Differenzierte Aufgabe</div>
       </div>
       <div class="qr-pool__item">
-        <div class="qr-pool__qr" data-qr-render="systemprompt_karte_pdf">
+        <div class="qr-pool__qr" data-qr-render="live_lernszenario">
           <div class="qr-pool__qr--empty">URL fehlt</div>
         </div>
-        <div class="qr-pool__label">System-Prompt-Karte<br>(Lernszenario)</div>
+        <div class="qr-pool__label">Säule 2<br>AIS.chat-Lernszenario</div>
       </div>
       <div class="qr-pool__item">
-        <div class="qr-pool__qr" data-qr-render="aischat_beispiel">
+        <div class="qr-pool__qr" data-qr-render="live_tool">
           <div class="qr-pool__qr--empty">URL fehlt</div>
         </div>
-        <div class="qr-pool__label">AIS.chat-Lernszenario<br>(Beispiel)</div>
-      </div>
-      <div class="qr-pool__item">
-        <div class="qr-pool__qr" data-qr-render="taskcards_pool">
-          <div class="qr-pool__qr--empty">URL fehlt</div>
-        </div>
-        <div class="qr-pool__label">TaskCards<br>(Material-Pool)</div>
-      </div>
-      <div class="qr-pool__item">
-        <div class="qr-pool__qr" data-qr-render="forms_feedback">
-          <div class="qr-pool__qr--empty">URL fehlt</div>
-        </div>
-        <div class="qr-pool__label">Workshop-Feedback<br>(Forms)</div>
-      </div>
-      <div class="qr-pool__item">
-        <div class="qr-pool__qr" data-qr-render="beispiel_tool">
-          <div class="qr-pool__qr--empty">URL fehlt</div>
-        </div>
-        <div class="qr-pool__label">Beispiel-Tool<br>aus Säule 3</div>
+        <div class="qr-pool__label">Säule 3<br>HTML-Tool</div>
       </div>
     </div>
 
@@ -1808,12 +1791,11 @@ const PHASES = [
 ];
 
 const QR_KEYS = [
-  { key: 'prompt_karte_pdf',         label: 'Prompt-Karte (Differenzierung)' },
-  { key: 'systemprompt_karte_pdf',   label: 'System-Prompt-Karte (Lernszenario)' },
-  { key: 'aischat_beispiel',           label: 'AIS.chat-Lernszenario (Beispiel)' },
-  { key: 'taskcards_pool',           label: 'TaskCards Material-Pool' },
-  { key: 'forms_feedback',           label: 'Workshop-Feedback Forms' },
-  { key: 'beispiel_tool',            label: 'Beispiel-Tool aus Säule 3' },
+  { key: 'prompt_karte_pdf',   label: 'Prompt-Karte Säule 1 (vorab als PDF)' },
+  { key: 'aischat_beispiel',   label: 'AIS.chat-Beispiel-Lernszenario (vorab)' },
+  { key: 'live_aufgabe',       label: 'Säule 1 · Live entstandene Aufgabe' },
+  { key: 'live_lernszenario',  label: 'Säule 2 · Live entstandenes Lernszenario' },
+  { key: 'live_tool',          label: 'Säule 3 · Live entstandenes HTML-Tool' },
 ];
 
 const STORAGE = {
