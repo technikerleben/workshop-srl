@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Blüte: Zwei Jahre SRL im Deutschunterricht</title>
+  <title>HBG-Blüte: Zwei Jahre SRL im Deutschunterricht</title>
   <style>
     :root{
       --slate:#3E5668;
@@ -55,10 +55,21 @@
     .timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:34px;align-items:stretch}.step{position:relative;background:#fff;border:1px solid rgba(62,86,104,.14);border-radius:26px;padding:24px;box-shadow:0 10px 24px rgba(30,45,55,.07)}.step .num{height:42px;width:42px;border-radius:14px;background:var(--slate);color:white;display:grid;place-items:center;font-weight:900;margin-bottom:14px}.step:nth-child(2) .num{background:var(--lilac)}.step:nth-child(3) .num{background:var(--rust)}.step h4{font-size:1.25rem;margin:0 0 8px}.step p{font-size:1.02rem;line-height:1.45;color:#3b4a55}
     .link-card{display:flex;align-items:center;justify-content:space-between;gap:20px;background:linear-gradient(135deg,#fff,#f8fafb);border:1px solid rgba(62,86,104,.14);border-radius:24px;padding:20px 22px;margin:12px 0;text-decoration:none;box-shadow:0 9px 20px rgba(30,45,55,.06)}.link-card:hover{outline:3px solid rgba(217,122,74,.25)}.link-card strong{font-size:1.18rem;color:var(--slate-dark)}.link-card span{display:block;color:var(--muted);font-size:.95rem;margin-top:4px}.arrow{font-size:1.7rem;color:var(--rust)}
     .footerbar{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;margin-top:10px;position:relative;z-index:25}.progress{height:10px;background:rgba(62,86,104,.12);border-radius:999px;overflow:hidden;flex:1;margin:0 14px}.progress-fill{height:100%;background:var(--slate);width:0}.small{font-size:.9rem;color:var(--muted);font-weight:750}.notes{position:fixed;right:18px;top:18px;bottom:118px;width:min(420px,calc(100vw - 36px));display:grid;grid-template-rows:auto 1fr auto;min-height:0;z-index:20;transform:translateX(calc(100% + 28px));transition:transform .22s ease;box-shadow:0 22px 60px rgba(20,32,40,.24)}.notes.open{transform:translateX(0)}.notes-head{padding:20px 20px 14px;background:linear-gradient(135deg,#fff,#f7fafb);border-bottom:1px solid rgba(62,86,104,.12)}.notes-head h2{font-size:1.2rem;margin:0 0 6px;color:var(--slate-dark)}.notes-head p{margin:0;color:var(--muted);font-size:.9rem;line-height:1.35}.note-area{padding:16px;display:flex;flex-direction:column;gap:12px;min-height:0}.note-label{font-weight:900;color:var(--slate-dark);font-size:.9rem}textarea{width:100%;flex:1;min-height:180px;resize:none;border-radius:20px;border:1px solid rgba(62,86,104,.18);padding:16px;font:inherit;font-size:1rem;line-height:1.4;outline:none;background:white;color:var(--ink)}textarea:focus{border-color:var(--rust);box-shadow:0 0 0 4px rgba(217,122,74,.15)}.note-actions{padding:14px 16px 18px;display:grid;grid-template-columns:1fr 1fr;gap:8px}.notes-close{position:absolute;right:14px;top:14px;border:0;border-radius:999px;width:34px;height:34px;background:#EEF3F7;color:var(--slate-dark);font-weight:900;cursor:pointer}.hint{font-size:.82rem;color:var(--muted);line-height:1.35;margin-top:6px}.comparison{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px}.before,.after{border-radius:24px;padding:24px}.before{background:#f3f5f6;border:1px dashed rgba(62,86,104,.35)}.after{background:linear-gradient(135deg,rgba(125,187,111,.15),rgba(116,169,216,.13));border:1px solid rgba(125,187,111,.35)}.before h4,.after h4{font-size:1.3rem;margin:0 0 12px;color:var(--slate-dark)}
+
+    .metric-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:24px}
+    .metric{background:#fff;border:1px solid rgba(62,86,104,.14);border-radius:20px;padding:18px;box-shadow:0 8px 18px rgba(30,45,55,.05)}
+    .metric .value{font-size:2.05rem;font-weight:950;color:var(--rust);line-height:1}
+    .metric .label{font-size:.96rem;font-weight:800;color:var(--slate-dark);line-height:1.25;margin-top:8px}
+    .metric .sub{font-size:.84rem;color:var(--muted);line-height:1.3;margin-top:6px}
+    .quote-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:22px}
+    .quote-card{background:#f8fafb;border-left:7px solid var(--rust);border-radius:18px;padding:18px 20px;box-shadow:0 8px 18px rgba(30,45,55,.05)}
+    .quote-card p{margin:0;font-size:1.06rem;line-height:1.38;color:#293945;font-weight:700}
+    .quote-card small{display:block;margin-top:8px;color:var(--muted);font-weight:800}
+    .notice{margin-top:22px;border-radius:22px;background:rgba(217,122,74,.12);border:1px solid rgba(217,122,74,.25);padding:18px 20px;color:#62301a;font-weight:800;line-height:1.4}
     .print-only{display:none}
-    @media (max-width:1100px){.app{grid-template-columns:1fr;height:100vh;overflow:hidden;padding:12px}.nav{display:none}.main{height:calc(100vh - 24px);min-height:0}.slide{padding:34px 28px}.grid,.grid.two,.grid.four,.timeline,.comparison{grid-template-columns:1fr}.toolbar{align-items:flex-start;flex-direction:column}.timer{width:100%;justify-content:space-between}.notes{bottom:170px}}
+    @media (max-width:1100px){.app{grid-template-columns:1fr;height:100vh;overflow:hidden;padding:12px}.nav{display:none}.main{height:calc(100vh - 24px);min-height:0}.slide{padding:34px 28px}.grid,.grid.two,.grid.four,.timeline,.comparison,.metric-grid,.quote-grid{grid-template-columns:1fr}.toolbar{align-items:flex-start;flex-direction:column}.timer{width:100%;justify-content:space-between}.notes{bottom:170px}}
     @media print{
-      body{overflow:visible;background:white}.app{display:block;height:auto;padding:0}.nav,.toolbar,.footerbar,.notes{display:none}.slide{display:block!important;height:auto;page-break-after:always;box-shadow:none;border:0;border-radius:0;padding:28mm 18mm}.slide::before{border-radius:0}.print-only{display:block}.no-print{display:none}.grid,.grid.two,.grid.four,.timeline,.comparison{break-inside:avoid}.card,.step,.link-card{break-inside:avoid;box-shadow:none}.slide h2{font-size:30pt}.lead{font-size:15pt}.big-quote{font-size:22pt}.print-notes{page-break-before:always;padding:20mm;font-family:Inter,Segoe UI,Arial,sans-serif}.print-notes h1{font-size:24pt;color:#263946}.print-note{border:1px solid #ccc;border-radius:12px;padding:12px;margin:12px 0}.print-note h3{margin:0 0 8px;color:#3E5668}.print-note p{white-space:pre-wrap;line-height:1.4}
+      body{overflow:visible;background:white}.app{display:block;height:auto;padding:0}.nav,.toolbar,.footerbar,.notes{display:none}.slide{display:block!important;height:auto;page-break-after:always;box-shadow:none;border:0;border-radius:0;padding:28mm 18mm}.slide::before{border-radius:0}.print-only{display:block}.no-print{display:none}.grid,.grid.two,.grid.four,.timeline,.comparison,.metric-grid,.quote-grid{break-inside:avoid}.card,.step,.link-card,.metric,.quote-card{break-inside:avoid;box-shadow:none}.slide h2{font-size:30pt}.lead{font-size:15pt}.big-quote{font-size:22pt}.print-notes{page-break-before:always;padding:20mm;font-family:Inter,Segoe UI,Arial,sans-serif}.print-notes h1{font-size:24pt;color:#263946}.print-note{border:1px solid #ccc;border-radius:12px;padding:12px;margin:12px 0}.print-note h3{margin:0 0 8px;color:#3E5668}.print-note p{white-space:pre-wrap;line-height:1.4}
     }
   </style>
 </head>
@@ -128,7 +139,7 @@
         <section class="slide" data-title="Stadtlyrik" data-sub="Der erste große Schritt">
           <div class="kicker">Unterrichtsreihe 1</div>
           <h2>Stadtlyrik: erste echte Öffnung</h2>
-          <p class="lead">Die Reihe war der erste große Versuch, eine komplette Unterrichtsreihe stärker über Lernziele, Pflichtmodule, Vertiefungen und digitale Unterstützung zu organisieren.</p>
+          <p class="lead">Die Reihe war der erste große Versuch, eine komplette Unterrichtsreihe stärker über Lernziele, Pflichtmodule, Vertiefungen und digitale Unterstützung zu organisieren. Ein früher verbindlicher Schritt zur Selbstregulation war dabei das verpflichtende Exit-Ticket zur Reflexion am Ende der Arbeitsphasen.</p>
           <div class="grid two">
             <div class="card">
               <h4>Was neu war</h4>
@@ -137,6 +148,7 @@
                 <li>Module statt linearer Aufgabenfolge</li>
                 <li>Vergleich von Gedichten und Songs</li>
                 <li>freiere Arbeitswege mit Pflichtbasis</li>
+                <li>verpflichtendes Exit-Ticket als erster Reflexionsanker</li>
               </ul>
             </div>
             <div class="card">
@@ -205,6 +217,9 @@
               </ul>
             </div>
           </div>
+          <a class="link-card" href="lernplaner.html" target="_blank" rel="noopener">
+            <div><strong>Lernplaner öffnen</strong><span>Planung und Exit-Ticket als eigenes Tool im gleichen Verzeichnis</span></div><div class="arrow">↗</div>
+          </a>
           <div class="big-quote">Der Lernplaner macht aus Arbeitszeit eine <em>bewusste Lernzeit</em>.</div>
         </section>
 
@@ -239,28 +254,47 @@
           <div class="big-quote">Digital organisiert. Analog verankert. Persönlich genutzt.</div>
         </section>
 
-        <section class="slide" data-title="Ergebnisse" data-sub="Vorsichtig einordnen">
+        <section class="slide" data-title="Ergebnisse" data-sub="Mündlich einordnen">
           <div class="kicker">Ausblick auf ZP-Ergebnisse</div>
-          <h2>Was zeigen die vermutlichen Ergebnisse?</h2>
-          <p class="lead">Die ZP-Ergebnisse sollten nicht als einfache Ursache-Wirkung-Erzählung präsentiert werden. Spannend ist vor allem, ob die Arbeitsweise Lernprozesse stabilisiert, Selbsteinschätzung verbessert und gezielteres Üben ermöglicht hat.</p>
+          <h2>ZP-Ergebnisse: vorsichtig und mündlich einordnen</h2>
+          <p class="lead">Die Ergebnisse aus der ersten Korrekturinstanz werden mündlich vorgestellt, weil die Zweitkorrektur noch aussteht. Im Mittelpunkt steht deshalb nicht eine endgültige Bilanz, sondern die vorsichtige Einordnung des Lernprozesses.</p>
           <div class="grid three">
-            <div class="card"><h4>Leistung</h4><p>Wie liegen die Ergebnisse im Verhältnis zu vorherigen Arbeiten, Probe-ZP und Erwartungen?</p></div>
+            <div class="card"><h4>Leistung</h4><p>Mündlicher Blick auf erste Tendenzen: Verhältnis zu vorherigen Arbeiten, Probe-ZP und Erwartungen.</p></div>
             <div class="card"><h4>Lernprozess</h4><p>Konnten Schüler:innen genauer sagen, was sie können und was sie üben müssen?</p></div>
-            <div class="card"><h4>Prüfungssicherheit</h4><p>Hat die Kombination aus Struktur und Wahlmöglichkeiten Sicherheit gegeben?</p></div>
+            <div class="card"><h4>Prüfungssicherheit</h4><p>Hat die Kombination aus Struktur, Wahlmöglichkeiten und Beratung Sicherheit gegeben?</p></div>
           </div>
+          <div class="notice">Hinweis für die Folie: Keine endgültigen Zahlen zeigen, solange die Zweitkorrektur aussteht. Die erste Korrekturinstanz dient nur als mündlicher Zwischenstand.</div>
         </section>
 
-        <section class="slide" data-title="Schüler:innenstimmen" data-sub="Feedback nach zwei Jahren">
-          <div class="kicker">Feedback</div>
-          <h2>Was sagen die Schüler:innen?</h2>
-          <p class="lead">Der Abschluss der Blüte: nicht nur über Schüler:innen sprechen, sondern ihre Perspektive sichtbar machen.</p>
-          <div class="grid two">
-            <div class="card"><h4>Mögliche Verdichtung</h4><p>Viele Rückmeldungen bewerten den Prozess sehr positiv: mehr Überblick, mehr Verantwortung, bessere Vorbereitung und das Gefühl, individueller arbeiten zu können.</p></div>
-            <div class="card"><h4>O-Töne einbauen</h4><p>Hier können kurze Zitate, Audioausschnitte oder anonymisierte Rückmeldungen eingeblendet werden.</p></div>
+        <section class="slide" data-title="Feedback-Auswertung" data-sub="11 Rückmeldungen">
+          <div class="kicker">Schüler:innenfeedback</div>
+          <h2>Was zeigen die Rückmeldungen?</h2>
+          <p class="lead">11 Schüler:innen haben die Arbeit der vergangenen zwei Jahre rückblickend bewertet. Der Gesamteindruck ist sehr positiv – besonders bei Selbstständigkeit, Wahlmöglichkeiten, eigenem Tempo und Feedback.</p>
+          <div class="metric-grid">
+            <div class="metric"><div class="value">10/11</div><div class="label">stärker selbst entschieden</div><div class="sub">10× „ja, absolut“, 1× „ein bisschen“</div></div>
+            <div class="metric"><div class="value">9/11</div><div class="label">heute selbstständiger</div><div class="sub">9× „ja, absolut“, 2× „ein bisschen“</div></div>
+            <div class="metric"><div class="value">7/11</div><div class="label">Stärken/Schwächen klarer</div><div class="sub">7× „ja, absolut“, 3× „ein bisschen“</div></div>
+            <div class="metric"><div class="value">7/11</div><div class="label">Module halfen gezielter</div><div class="sub">7× „ja, absolut“, 3× „ein bisschen“, 1× „nein“</div></div>
+            <div class="metric"><div class="value">7/11</div><div class="label">Feedback half beim nächsten Schritt</div><div class="sub">7× „ja, absolut“, 4× „ein bisschen“</div></div>
+            <div class="metric"><div class="value">7/11</div><div class="label">Lernplaner eher als Stütze</div><div class="sub">2× „ja, absolut“, 7× „ein bisschen“, 2× „eher wenig“</div></div>
           </div>
           <a class="link-card" href="https://forms.office.com/Pages/AnalysisPage.aspx?AnalyzerToken=PBIVeYRnh1CpF4vD0PYtQRF6M79cZoYC&id=ztracBomw0SzDGCTXTgnnNUGthZNT0ZFgpKBUSH2WoZURDRHM1A2TUZSOEExUUZDSlk3M0dDWDBOUC4u" target="_blank" rel="noopener">
             <div><strong>Feedback-Ergebnisse öffnen</strong><span>Microsoft Forms-Auswertung für alle sichtbar machen</span></div><div class="arrow">↗</div>
           </a>
+        </section>
+
+        <section class="slide" data-title="Schüler:innenstimmen" data-sub="O-Töne nach zwei Jahren">
+          <div class="kicker">O-Töne</div>
+          <h2>Wie beschreiben die Schüler:innen die Veränderung?</h2>
+          <p class="lead">Die Aussagen zeigen vor allem: Mehr Selbstregulation wurde nicht als Beliebigkeit erlebt, sondern als Möglichkeit, passender, ruhiger und selbstständiger zu lernen.</p>
+          <div class="quote-grid">
+            <div class="quote-card"><p>„Ich konnte viel besser für mich selbst entscheiden, wie viel ich in den Stunden lernen möchte.“</p><small>eigenes Tempo und Planung</small></div>
+            <div class="quote-card"><p>„Ich fühle mich nicht so gestresst beim Lernen und kann selber in meinem Tempo arbeiten.“</p><small>Entlastung und Passung</small></div>
+            <div class="quote-card"><p>„Die Feedbacklisten haben mir immer geholfen, zu wissen, was ich noch üben muss und was ich schon kann.“</p><small>Feedback als Orientierung</small></div>
+            <div class="quote-card"><p>„Ich kann selber gucken, wie weit ich bin, und selber entscheiden, was ich machen möchte.“</p><small>Selbsteinschätzung</small></div>
+            <div class="quote-card"><p>„Mir hat das Arbeiten mehr Spaß gemacht und ich habe mehr gearbeitet als im normalen Unterricht, ohne es zu merken.“</p><small>Motivation</small></div>
+            <div class="quote-card"><p>„Probieren Sie das aus, denn so haben Schüler die Möglichkeit, sich auf ihre Stärken zu konzentrieren.“</p><small>Empfehlung an Kolleg:innen</small></div>
+          </div>
           <div class="big-quote">Der wichtigste Effekt: Schüler:innen können besser über ihr eigenes Lernen sprechen.</div>
         </section>
 
