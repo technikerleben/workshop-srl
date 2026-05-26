@@ -452,6 +452,9 @@ p.muted {
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
 }
+.tool-grid--3 {
+  grid-template-columns: repeat(3, 1fr);
+}
 .tool-card {
   background: var(--white);
   border-radius: 14px;
@@ -461,6 +464,13 @@ p.muted {
   display: flex;
   gap: 16px;
   align-items: center;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.12s, box-shadow 0.15s;
+}
+a.tool-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px var(--shadow-lg);
 }
 .tool-card__icon {
   font-size: 38px;
@@ -484,9 +494,26 @@ p.muted {
   color: var(--text-muted);
   margin-bottom: 8px;
 }
+.tool-card__foot {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+  margin-top: 8px;
+}
+.tool-card__url {
+  font-size: 11px;
+  font-family: 'SFMono-Regular', 'Menlo', 'Consolas', monospace;
+  color: var(--rust-dark);
+  letter-spacing: 0.02em;
+  word-break: break-all;
+}
 
-@media (max-width: 900px) {
-  .tool-grid { grid-template-columns: 1fr; }
+@media (max-width: 1000px) {
+  .tool-grid--3 { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 700px) {
+  .tool-grid, .tool-grid--3 { grid-template-columns: 1fr; }
 }
 
 /* QR Block */
@@ -750,7 +777,7 @@ ul.clean li::before {
    ════════════════════════════════════════════════════════ */
 .image-slot {
   background: var(--slate-ghost);
-  /* border: 2px dashed var(--slate-mid); */
+  border: 2px dashed var(--slate-mid);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -1227,6 +1254,7 @@ ul.clean li::before {
   </div>
 
   <button class="hb-btn" id="overviewBtn" title="Übersicht (ESC)" aria-label="Übersicht">▦</button>
+  <button class="hb-btn" id="fullscreenBtn" title="Vollbild (F)" aria-label="Vollbild">⛶</button>
   <button class="hb-btn" id="setupBtn" title="QR-URLs setzen (S)" aria-label="QR-Setup">⚙</button>
   <button class="hb-btn" id="notesBtn" title="Notizen (N)" aria-label="Notizen">✎</button>
 </header>
@@ -1257,7 +1285,11 @@ ul.clean li::before {
            Eher zurückhaltend — nicht ablenkend vom Titel.
            Wenn du kein Bild willst: einfach das ganze <div class="image-slot ..."> entfernen. -->
       <div class="image-slot image-slot--4x3">
-       <img class="image-slot__img" src="folie1.png" alt="Schüler:innen beim Arbeiten">
+        <div class="image-slot__placeholder">
+          <span class="image-slot__icon">🖼</span>
+          <span class="image-slot__label">Optionales Hero-Bild</span>
+          <span class="image-slot__desc">Foto deines Klassenraums, SuS bei iPad-Arbeit oder dezent-abstraktes Visual</span>
+        </div>
       </div>
     </div>
   </div>
@@ -1274,13 +1306,28 @@ ul.clean li::before {
     <p class="lead">Header-Timer, Notizfunktion, QR-Generator, druckbare Mitschrift — all das ist mit einem einzigen Prompt entstanden, in einer Iterationsschleife. In Phase 4 schauen wir uns an, wie das geht.</p>
 
     <div class="grid-2" style="margin-top: 28px;">
-     
+      <!-- BILD-SLOT · Slide 2 — Screenshot der Workshop-Seite
+           Inhalt: Diese Seite selbst, im Browser geöffnet — gerne mit dezenter
+           Mockup-Perspektive (leicht schräg, Schatten). Idealerweise eine Sektion,
+           in der man die typischen Elemente sieht (Header-Timer, QR-Code, Notiz). -->
+      <div class="image-slot image-slot--16x10">
+        <div class="image-slot__placeholder">
+          <span class="image-slot__icon">🖥</span>
+          <span class="image-slot__label">Screenshot der Workshop-Seite</span>
+          <span class="image-slot__desc">Diese Seite im Browser — gerne als Mockup mit dezenter Perspektive</span>
+        </div>
+      </div>
+
       <!-- BILD-SLOT · Slide 2 — Original-Prompt
            Inhalt: Screenshot eines Ausschnitts des Prompts, mit dem diese Seite
            entstanden ist. Mono-Schrift, ggf. mit syntax-Highlighting. Wirkt
            authentisch und macht den Meta-Twist greifbar. -->
       <div class="image-slot image-slot--16x10">
-            <img class="image-slot__img" src="folie2.png" alt="KI-Erstellung dieser Seite">
+        <div class="image-slot__placeholder">
+          <span class="image-slot__icon">⌨</span>
+          <span class="image-slot__label">Ausschnitt des Original-Prompts</span>
+          <span class="image-slot__desc">Screenshot des Chat-Prompts in Mono-Schrift, mit dem die Seite entstanden ist</span>
+        </div>
       </div>
     </div>
 
@@ -1399,7 +1446,13 @@ ul.clean li::before {
          die drei vom LLM erzeugten Niveaustufen — als drei kompakte Spalten oder
          als Screenshot einer KI-Antwort. Idealerweise mit einer echten Aufgabe
          aus deinem Unterricht. Macht „drei Niveaustufen" sofort konkret. -->
-  
+    <div class="image-slot image-slot--3x1" style="margin-top: 28px;">
+      <div class="image-slot__placeholder">
+        <span class="image-slot__icon">↔</span>
+        <span class="image-slot__label">Vorher / Nachher — eine Aufgabe in drei Niveaustufen</span>
+        <span class="image-slot__desc">Original-Aufgabe links, generierte Mindest-/Regel-/Expertenstandard-Variante rechts</span>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1439,7 +1492,11 @@ ul.clean li::before {
          unterschiedlichen Stufen arbeiten. Datenschutz beachten: SuS von hinten,
          anonymisiert, oder nur Hände/Material zeigen. -->
     <div class="image-slot image-slot--16x9" style="margin-top: 28px;">
-     <img class="image-slot__img" src="folie6.png" alt="drei differenzierte Arbeitsblätter">
+      <div class="image-slot__placeholder">
+        <span class="image-slot__icon">📚</span>
+        <span class="image-slot__label">Differenzierung in der Praxis</span>
+        <span class="image-slot__desc">Drei Arbeitsblätter nebeneinander oder SuS bei unterschiedlichen Stufen — Datenschutz beachten</span>
+      </div>
     </div>
   </div>
 </section>
@@ -1477,9 +1534,19 @@ ul.clean li::before {
          Macht den entscheidenden Unterschied zwischen „Was sehen die SuS"
          und „Wo entscheidet sich, was die KI tut" sichtbar. -->
     <div class="grid-2" style="margin-top: 28px;">
-      
       <div class="image-slot image-slot--16x10">
-            <img class="image-slot__img" src="folie7.png" alt="telli-Ansichten">
+        <div class="image-slot__placeholder">
+          <span class="image-slot__icon">💬</span>
+          <span class="image-slot__label">SuS-Perspektive</span>
+          <span class="image-slot__desc">Screenshot eines laufenden Lernszenarios aus Sicht der Schüler:innen</span>
+        </div>
+      </div>
+      <div class="image-slot image-slot--16x10">
+        <div class="image-slot__placeholder">
+          <span class="image-slot__icon">⚙</span>
+          <span class="image-slot__label">Konfigurations-Seite</span>
+          <span class="image-slot__desc">Screenshot der telli-Konfiguration mit dem System-Prompt</span>
+        </div>
       </div>
     </div>
   </div>
@@ -1537,70 +1604,63 @@ ul.clean li::before {
     <h2 class="slide-title">Kein Codieren. Kein Hosting. Nur Prompt → Tool.</h2>
     <p class="lead">Kleine interaktive Lernseiten, die im Browser laufen. Per QR-Code in den Unterricht. Eine bis vier Iterationen — fertig.</p>
 
-    <!-- BILD-SLOTS · Slide 9 — Vier echte Tool-Screenshots
-         Ersetze die Platzhalter durch Screenshots deiner bestehenden Tools.
-         Idealerweise ein typischer Bildschirm pro Tool, der den Charakter zeigt.
-         Bei Screenshots: ggf. mit weißem Rand oder Schatten arbeiten für klare Abgrenzung. -->
-    <div class="tool-grid" style="margin-top: 32px;">
-      <div class="tool-card tool-card--with-image">
+    <!-- BILD-SLOTS · Slide 9 — Drei echte Tool-Screenshots
+         Ersetze die Platzhalter durch Screenshots der drei Apps.
+         Tipp: Tools im Browser öffnen, Screenshot machen, ggf. zuschneiden auf 16:10. -->
+    <div class="tool-grid tool-grid--3" style="margin-top: 32px;">
+      <a href="https://elektrozimmer.vercel.app/" target="_blank" rel="noopener" class="tool-card tool-card--with-image">
         <div class="image-slot image-slot--16x10">
           <div class="image-slot__placeholder">
-            <span class="image-slot__icon">🐠</span>
-            <span class="image-slot__label">Aquarium-Baumeister</span>
-            <span class="image-slot__desc">Screenshot des Spielbildschirms</span>
+            <span class="image-slot__icon">⚡</span>
+            <span class="image-slot__label">Elektrozimmer</span>
+            <span class="image-slot__desc">Screenshot der Elektroinstallations-Übersicht</span>
           </div>
         </div>
         <div class="tool-card__body">
-          <h4>Aquarium-Baumeister</h4>
-          <p>Mini-Spiel zur Multiplikation, Klasse 2 — fünf Iterationen.</p>
-          <span class="badge badge--outline">Mathe · Kl. 2</span>
+          <h4>Elektrozimmer</h4>
+          <p>Modell einer Elektroinstallation im Haus — interaktive Komponenten und Schaltungen.</p>
+          <div class="tool-card__foot">
+            <span class="badge badge--outline">Technik · Kl. 7</span>
+            <span class="tool-card__url">elektrozimmer.vercel.app</span>
+          </div>
         </div>
-      </div>
+      </a>
 
-      <div class="tool-card tool-card--with-image">
+      <a href="https://la2-zusammenfassung.vercel.app/" target="_blank" rel="noopener" class="tool-card tool-card--with-image">
         <div class="image-slot image-slot--16x10">
           <div class="image-slot__placeholder">
-            <span class="image-slot__icon">📝</span>
-            <span class="image-slot__label">Lernwörter-Trainer</span>
-            <span class="image-slot__desc">Screenshot der Übungsansicht</span>
+            <span class="image-slot__icon">📖</span>
+            <span class="image-slot__label">LA2 Zusammenfassung</span>
+            <span class="image-slot__desc">Screenshot der Schreibaufgaben-Oberfläche</span>
           </div>
         </div>
         <div class="tool-card__body">
-          <h4>Lernwörter-Trainer</h4>
-          <p>Rechtschreibung mit eigenem Wörterlistenimport, TTS, animiertes Feedback.</p>
-          <span class="badge badge--outline">Deutsch · Kl. 2</span>
+          <h4>LA2 Zusammenfassung</h4>
+          <p>Zusammenfassen von Literaturauszügen — strukturierte Schreibumgebung mit Lernschritten.</p>
+          <div class="tool-card__foot">
+            <span class="badge badge--outline">Deutsch · Kl. 10</span>
+            <span class="tool-card__url">la2-zusammenfassung.vercel.app</span>
+          </div>
         </div>
-      </div>
+      </a>
 
-      <div class="tool-card tool-card--with-image">
+      <a href="https://reisespiele3d.vercel.app/" target="_blank" rel="noopener" class="tool-card tool-card--with-image">
         <div class="image-slot image-slot--16x10">
           <div class="image-slot__placeholder">
-            <span class="image-slot__icon">📐</span>
-            <span class="image-slot__label">Bohrmaschinen-Crashkurs</span>
-            <span class="image-slot__desc">Screenshot des Sicherheitsquiz</span>
+            <span class="image-slot__icon">🎲</span>
+            <span class="image-slot__label">Reisespiele 3D</span>
+            <span class="image-slot__desc">Screenshot der 3D-Druck-Projektübersicht</span>
           </div>
         </div>
         <div class="tool-card__body">
-          <h4>Bohrmaschinen-Crashkurs</h4>
-          <p>Sicherheitstraining mit Quiz und Drag&amp;Drop — vier Iterationen.</p>
-          <span class="badge badge--outline">Technik · Kl. 5–8</span>
-        </div>
-      </div>
-
-      <div class="tool-card tool-card--with-image">
-        <div class="image-slot image-slot--16x10">
-          <div class="image-slot__placeholder">
-            <span class="image-slot__icon">🏠</span>
-            <span class="image-slot__label">Erste eigene Wohnung</span>
-            <span class="image-slot__desc">Screenshot einer Lernpfad-Seite</span>
+          <h4>Reisespiele 3D</h4>
+          <p>Reisespiele aus dem 3D-Drucker — Projektbegleitung von der Idee bis zur fertigen Datei.</p>
+          <div class="tool-card__foot">
+            <span class="badge badge--outline">Technik · Kl. 8</span>
+            <span class="tool-card__url">reisespiele3d.vercel.app</span>
           </div>
         </div>
-        <div class="tool-card__body">
-          <h4>Erste eigene Wohnung</h4>
-          <p>Sieben-Seiten-Lernpfad WP10 — zur Sequenzbegleitung.</p>
-          <span class="badge badge--outline">WP · Kl. 10</span>
-        </div>
-      </div>
+      </a>
     </div>
 
     <div class="hint" style="margin-top: 28px;">
@@ -1643,40 +1703,8 @@ ul.clean li::before {
   </div>
 </section>
 
-<!-- ═══ SLIDE 11: META — WIE WURDE DIESE SEITE GEBAUT ═══ -->
-<section class="slide" id="s11" data-phase="4" data-title="Wie wurde diese Seite gebaut?">
-  <div class="slide-inner" style="text-align: center;">
-    <span class="slide-eyebrow" style="display: inline-flex;">Meta-Moment</span>
-    <h2 class="slide-title">Wie wurde eigentlich diese Workshop-Seite gebaut?</h2>
-    <p class="lead" style="margin-left: auto; margin-right: auto;">Genauso wie alles, was ihr heute gesehen habt. Mit einem Prompt, ein paar Iterationen — und einer klaren Vorstellung davon, was die Seite können soll.</p>
-
-    <button class="btn" style="margin-top: 28px; padding: 14px 28px; font-size: 17px;" onclick="openSourceModal()">
-      Den Original-Prompt ansehen
-    </button>
-
-    <!-- BILD-SLOT · Slide 11 — Chat-Screenshot der Entstehung
-         Inhalt: Ein Screenshot der Chat-Konversation, in der die Workshop-Seite
-         mit Claude/ChatGPT entstanden ist. Idealerweise mit sichtbaren
-         Iterationsschritten ("mach das so", "kannst du Notizfunktion hinzufügen").
-         Alternative: drei Mini-Versionen der Seite nebeneinander, die zeigen,
-         wie sie sich entwickelt hat.
-         Wirkung: macht greifbar, wie so etwas wirklich entsteht. -->
-    <div class="image-slot image-slot--16x9" style="margin: 32px auto 0; max-width: 880px; text-align: left;">
-      <div class="image-slot__placeholder">
-        <span class="image-slot__icon">💭</span>
-        <span class="image-slot__label">Chat-Verlauf der Entstehung</span>
-        <span class="image-slot__desc">Screenshot deiner echten Konversation mit Claude — mit sichtbaren Iterationsschritten</span>
-      </div>
-    </div>
-
-    <div class="hint hint--slate" style="margin-top: 32px; text-align: left;">
-      <strong>Was du mitnimmst:</strong> Diese Workshop-Seite samt aller Materialien bleibt verfügbar. Wer tiefer einsteigen will — sprich mich an, wir finden ein Format dafür.
-    </div>
-  </div>
-</section>
-
-<!-- ═══ SLIDE 12: SICHERUNG — REFLEXIONS-KARTEIKARTE ═══ -->
-<section class="slide slide--sage-tinted" id="s12" data-phase="5" data-title="Sicherung: Mein nächster Schritt">
+<!-- ═══ SLIDE 11: SICHERUNG — REFLEXIONS-KARTEIKARTE ═══ -->
+<section class="slide slide--sage-tinted" id="s11" data-phase="5" data-title="Sicherung: Mein nächster Schritt">
   <div class="slide-inner">
     <span class="slide-eyebrow">Phase 5 · Mein nächster Schritt</span>
     <h2 class="slide-title" style="text-align: center;">Was nimmst du mit?</h2>
@@ -1703,8 +1731,8 @@ ul.clean li::before {
   </div>
 </section>
 
-<!-- ═══ SLIDE 13: MATERIAL-POOL ═══ -->
-<section class="slide" id="s13" data-phase="5" data-title="Material-Pool">
+<!-- ═══ SLIDE 12: MATERIAL-POOL ═══ -->
+<section class="slide" id="s12" data-phase="5" data-title="Material-Pool">
   <div class="slide-inner">
     <span class="slide-eyebrow">Material-Pool</span>
     <h2 class="slide-title">Alles, was du heute gesehen hast — zum Mitnehmen.</h2>
@@ -1752,8 +1780,8 @@ ul.clean li::before {
   </div>
 </section>
 
-<!-- ═══ SLIDE 14: SCHLUSS ═══ -->
-<section class="slide slide--slate-hero" id="s14" data-phase="5" data-title="Danke">
+<!-- ═══ SLIDE 13: SCHLUSS ═══ -->
+<section class="slide slide--slate-hero" id="s13" data-phase="5" data-title="Danke">
   <div class="slide-inner" style="text-align: center;">
     <span class="slide-eyebrow">Workshop-Abschluss</span>
     <h1 class="slide-title">Danke.</h1>
@@ -1810,41 +1838,6 @@ ul.clean li::before {
 </div>
 
 <!-- ═════════════════════════════════════════════════════════
-     SOURCE-MODAL (Sektion 11)
-     ═════════════════════════════════════════════════════════ -->
-<div class="modal-backdrop" id="sourceModal" role="dialog" aria-modal="true">
-  <div class="modal">
-    <div class="modal-head">
-      <h2>Wie wurde diese Seite gebaut?</h2>
-      <button class="hb-btn" style="background: var(--slate-pale); color: var(--slate-dark);" onclick="closeSourceModal()" aria-label="Schließen">✕</button>
-    </div>
-    <div class="modal-body">
-      <p class="muted" style="margin-bottom: 14px;">Der Prompt — sinngemäß, in einer Iteration entstanden:</p>
-      <pre class="source-pre">Plane eine workshop-begleitende HTML-Seite als Präsentation und Beispiel
-in einem. Die Seite soll durch den Workshop führen, den Zeitplan sichtbar
-machen und über QR-Codes die aktive Teilnahme ermöglichen.
-
-Anforderungen:
-- 14 Sektionen, jede ein Bildschirm
-- Header-Bar mit Phase, Phasen-Timer, Gesamt-Timer
-- Notizfunktion mit PDF-Druck am Ende
-- QR-Generator: URL einfügen, QR sofort sichtbar
-- HBG-SRL-Farbschema (Schieferblau / Rostorange / Salbeigrün)
-- Tastatursteuerung (Pfeile, Leertaste, N für Notizen, ESC für Übersicht)
-- localStorage für Notizen und URLs
-- Druckbare Mitschrift, offline-fähig
-
-Stil: web-inspiriert, klare Struktur, keine externen Abhängigkeiten
-außer einer kleinen QR-Lib.</pre>
-      <p class="muted" style="margin-top: 16px; font-size: 13px;">→ Genauso entstehen kleine interaktive Lernumgebungen wie die in Säule 3. Ein Prompt, drei bis fünf Iterationen, fertig.</p>
-    </div>
-    <div class="modal-foot">
-      <button class="btn" onclick="closeSourceModal()">Schließen</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═════════════════════════════════════════════════════════
      OVERVIEW
      ═════════════════════════════════════════════════════════ -->
 <div class="overview" id="overview" role="dialog" aria-label="Sektionen-Übersicht">
@@ -1863,6 +1856,7 @@ außer einer kleinen QR-Lib.</pre>
   <span><kbd>Leer</kbd> Timer</span>
   <span><kbd>N</kbd> Notizen</span>
   <span><kbd>S</kbd> Setup</span>
+  <span><kbd>F</kbd> Vollbild</span>
   <span><kbd>Esc</kbd> Übersicht</span>
 </div>
 
@@ -1874,8 +1868,8 @@ const PHASES = [
   { num: 1, name: 'Einstieg & Anker',           sections: [1,2,3,4],     duration: 12 * 60 },
   { num: 2, name: 'Material differenzieren',    sections: [5,6],         duration: 25 * 60 },
   { num: 3, name: 'Telli-Lernszenario',         sections: [7,8],         duration: 20 * 60 },
-  { num: 4, name: 'HTML live mit KI bauen',     sections: [9,10,11],     duration: 22 * 60 },
-  { num: 5, name: 'Sicherung & Transfer',       sections: [12,13,14],    duration: 11 * 60 },
+  { num: 4, name: 'HTML live mit KI bauen',     sections: [9,10],        duration: 22 * 60 },
+  { num: 5, name: 'Sicherung & Transfer',       sections: [11,12,13],    duration: 11 * 60 },
 ];
 
 const QR_KEYS = [
@@ -2027,16 +2021,6 @@ function renderLiveQR() {
 }
 
 // ═════════════════════════════════════════════════════════
-//  SOURCE-MODAL
-// ═════════════════════════════════════════════════════════
-function openSourceModal() {
-  document.getElementById('sourceModal').classList.add('open');
-}
-function closeSourceModal() {
-  document.getElementById('sourceModal').classList.remove('open');
-}
-
-// ═════════════════════════════════════════════════════════
 //  NOTIZEN-PANEL
 // ═════════════════════════════════════════════════════════
 function buildNotesPanel() {
@@ -2045,8 +2029,8 @@ function buildNotesPanel() {
 
   // Pro Sektion ein Block (außer Sektionen ohne sinnvolle Notiz wie Titel-Slides)
   SECTIONS.forEach(sec => {
-    // Optional: Titel-Slides ausblenden (s1, s2, s14)
-    if (['s1','s2','s14'].includes(sec.id)) return;
+    // Optional: Titel-Slides ausblenden (s1, s2, s13)
+    if (['s1','s2','s13'].includes(sec.id)) return;
 
     const block = document.createElement('div');
     block.className = 'notes-section';
@@ -2124,7 +2108,7 @@ function exportNotes() {
 
   // Sektion-Notizen
   SECTIONS.forEach(sec => {
-    if (['s1','s2','s14'].includes(sec.id)) return;
+    if (['s1','s2','s13'].includes(sec.id)) return;
     const noteVal = (notes['note_' + sec.id] || '').trim();
     if (noteVal) {
       html += `
@@ -2308,6 +2292,33 @@ function toggleOverview() {
 }
 
 // ═════════════════════════════════════════════════════════
+//  VOLLBILD
+// ═════════════════════════════════════════════════════════
+function toggleFullscreen() {
+  const doc = document;
+  const el = document.documentElement;
+  const isFs = doc.fullscreenElement || doc.webkitFullscreenElement || doc.msFullscreenElement;
+  if (isFs) {
+    if (doc.exitFullscreen) doc.exitFullscreen();
+    else if (doc.webkitExitFullscreen) doc.webkitExitFullscreen();
+    else if (doc.msExitFullscreen) doc.msExitFullscreen();
+  } else {
+    if (el.requestFullscreen) el.requestFullscreen();
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    else if (el.msRequestFullscreen) el.msRequestFullscreen();
+  }
+}
+
+function updateFullscreenBtn() {
+  const isFs = document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
+  const btn = document.getElementById('fullscreenBtn');
+  if (!btn) return;
+  btn.textContent = isFs ? '⛶' : '⛶';
+  btn.classList.toggle('active', !!isFs);
+  btn.title = isFs ? 'Vollbild verlassen (F)' : 'Vollbild (F)';
+}
+
+// ═════════════════════════════════════════════════════════
 //  SCROLL-OBSERVER (welche Sektion ist sichtbar?)
 // ═════════════════════════════════════════════════════════
 function initScrollObserver() {
@@ -2336,6 +2347,7 @@ function initKeyboard() {
     else if (e.key === ' ') { e.preventDefault(); toggleTimer(); }
     else if (e.key === 'n' || e.key === 'N') { toggleNotes(); }
     else if (e.key === 's' || e.key === 'S') { openSetup(); }
+    else if (e.key === 'f' || e.key === 'F') { toggleFullscreen(); }
     else if (e.key === 'Escape') { toggleOverview(); }
     else if (e.key === '?' ) { toggleKbdHint(); }
   });
@@ -2378,15 +2390,18 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('sectPrev').addEventListener('click', prevSection);
   document.getElementById('sectNext').addEventListener('click', nextSection);
   document.getElementById('overviewBtn').addEventListener('click', toggleOverview);
+  document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
   document.getElementById('setupBtn').addEventListener('click', () => openSetup());
   document.getElementById('notesBtn').addEventListener('click', toggleNotes);
+
+  // Fullscreen-Statusänderungen abfangen (auch wenn der User per ESC raus geht)
+  document.addEventListener('fullscreenchange', updateFullscreenBtn);
+  document.addEventListener('webkitfullscreenchange', updateFullscreenBtn);
+  document.addEventListener('msfullscreenchange', updateFullscreenBtn);
 
   // Setup-Modal: ESC, Backdrop-Klick
   document.getElementById('setupModal').addEventListener('click', e => {
     if (e.target.id === 'setupModal') closeSetup();
-  });
-  document.getElementById('sourceModal').addEventListener('click', e => {
-    if (e.target.id === 'sourceModal') closeSourceModal();
   });
 
   // Scroll-Observer
