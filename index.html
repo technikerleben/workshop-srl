@@ -1279,17 +1279,9 @@ ul.clean li::before {
         </div>
       </div>
 
-      <!-- BILD-SLOT · OPTIONAL · Slide 1 (Hero)
-           Idee: SuS bei iPad-Arbeit (von hinten/anonymisiert), leerer Klassenraum
-           mit Beamer, oder KI-generiertes abstraktes Visual in Slate/Rust.
-           Eher zurückhaltend — nicht ablenkend vom Titel.
-           Wenn du kein Bild willst: einfach das ganze <div class="image-slot ..."> entfernen. -->
+      <!-- BILD · Slide 1 (Hero) — folie1.png -->
       <div class="image-slot image-slot--4x3">
-        <div class="image-slot__placeholder">
-          <span class="image-slot__icon">🖼</span>
-          <span class="image-slot__label">Optionales Hero-Bild</span>
-          <span class="image-slot__desc">Foto deines Klassenraums, SuS bei iPad-Arbeit oder dezent-abstraktes Visual</span>
-        </div>
+        <img class="image-slot__img" src="folie1.png" alt="Workshop-Hero">
       </div>
     </div>
   </div>
@@ -1305,33 +1297,10 @@ ul.clean li::before {
     <h2 class="slide-title">Sie ist gleichzeitig euer Beispiel für Säule 3.</h2>
     <p class="lead">Header-Timer, Notizfunktion, QR-Generator, druckbare Mitschrift — all das ist mit einem einzigen Prompt entstanden, in einer Iterationsschleife. In Phase 4 schauen wir uns an, wie das geht.</p>
 
-    <div class="grid-2" style="margin-top: 28px;">
-      <!-- BILD-SLOT · Slide 2 — Screenshot der Workshop-Seite
-           Inhalt: Diese Seite selbst, im Browser geöffnet — gerne mit dezenter
-           Mockup-Perspektive (leicht schräg, Schatten). Idealerweise eine Sektion,
-           in der man die typischen Elemente sieht (Header-Timer, QR-Code, Notiz). -->
-      <div class="image-slot image-slot--16x10">
-        <div class="image-slot__placeholder">
-          <span class="image-slot__icon">🖥</span>
-          <span class="image-slot__label">Screenshot der Workshop-Seite</span>
-          <span class="image-slot__desc">Diese Seite im Browser — gerne als Mockup mit dezenter Perspektive</span>
-        </div>
-      </div>
-
-      <!-- BILD-SLOT · Slide 2 — Original-Prompt
-           Inhalt: Screenshot eines Ausschnitts des Prompts, mit dem diese Seite
-           entstanden ist. Mono-Schrift, ggf. mit syntax-Highlighting. Wirkt
-           authentisch und macht den Meta-Twist greifbar. -->
-      <div class="image-slot image-slot--16x10">
-        <div class="image-slot__placeholder">
-          <span class="image-slot__icon">⌨</span>
-          <span class="image-slot__label">Ausschnitt des Original-Prompts</span>
-          <span class="image-slot__desc">Screenshot des Chat-Prompts in Mono-Schrift, mit dem die Seite entstanden ist</span>
-        </div>
-      </div>
+    <!-- BILD · Slide 2 — folie2.png -->
+    <div class="image-slot image-slot--16x9" style="margin: 28px auto 0; max-width: 880px;">
+      <img class="image-slot__img" src="folie2.png" alt="Workshop-Seite mit Claude gebaut">
     </div>
-
-    <p class="muted" style="margin-top: 18px;">→ Du findest am Ende von Phase 4 einen Knopf <em>„Wie wurde diese Seite gebaut?"</em>.</p>
   </div>
 </section>
 
@@ -1441,17 +1410,9 @@ ul.clean li::before {
       </div>
     </div>
 
-    <!-- BILD-SLOT · Slide 5 — Vorher/Nachher Differenzierung
-         Inhalt: Links die Original-Aufgabe (kurzer Textblock), rechts (oder darunter)
-         die drei vom LLM erzeugten Niveaustufen — als drei kompakte Spalten oder
-         als Screenshot einer KI-Antwort. Idealerweise mit einer echten Aufgabe
-         aus deinem Unterricht. Macht „drei Niveaustufen" sofort konkret. -->
+    <!-- BILD · Slide 5 — folie5.png -->
     <div class="image-slot image-slot--3x1" style="margin-top: 28px;">
-      <div class="image-slot__placeholder">
-        <span class="image-slot__icon">↔</span>
-        <span class="image-slot__label">Vorher / Nachher — eine Aufgabe in drei Niveaustufen</span>
-        <span class="image-slot__desc">Original-Aufgabe links, generierte Mindest-/Regel-/Expertenstandard-Variante rechts</span>
-      </div>
+      <img class="image-slot__img" src="folie5.png" alt="Aufgabe in drei Niveaustufen">
     </div>
   </div>
 </section>
@@ -1486,17 +1447,9 @@ ul.clean li::before {
       </div>
     </div>
 
-    <!-- BILD-SLOT · Slide 6 — Differenziertes Material in der Praxis
-         Inhalt: Foto z.B. von drei Arbeitsblättern nebeneinander auf einem Schultisch
-         (Mindest-/Regel-/Expertenstandard erkennbar), oder SuS, die an
-         unterschiedlichen Stufen arbeiten. Datenschutz beachten: SuS von hinten,
-         anonymisiert, oder nur Hände/Material zeigen. -->
+    <!-- BILD · Slide 6 — folie6.png -->
     <div class="image-slot image-slot--16x9" style="margin-top: 28px;">
-      <div class="image-slot__placeholder">
-        <span class="image-slot__icon">📚</span>
-        <span class="image-slot__label">Differenzierung in der Praxis</span>
-        <span class="image-slot__desc">Drei Arbeitsblätter nebeneinander oder SuS bei unterschiedlichen Stufen — Datenschutz beachten</span>
-      </div>
+      <img class="image-slot__img" src="folie6.png" alt="Differenzierung in der Praxis">
     </div>
   </div>
 </section>
@@ -1527,27 +1480,9 @@ ul.clean li::before {
       </div>
     </div>
 
-    <!-- BILD-SLOTS · Slide 7 — Telli SuS-Perspektive + Konfigurations-Seite
-         Inhalt: Zwei Screenshots aus telli, deine bestehenden Lernszenarien.
-         Links: SuS-Perspektive — der laufende Chat im Lernszenario.
-         Rechts: Konfigurations-Seite — wo der System-Prompt eingetragen wird.
-         Macht den entscheidenden Unterschied zwischen „Was sehen die SuS"
-         und „Wo entscheidet sich, was die KI tut" sichtbar. -->
-    <div class="grid-2" style="margin-top: 28px;">
-      <div class="image-slot image-slot--16x10">
-        <div class="image-slot__placeholder">
-          <span class="image-slot__icon">💬</span>
-          <span class="image-slot__label">SuS-Perspektive</span>
-          <span class="image-slot__desc">Screenshot eines laufenden Lernszenarios aus Sicht der Schüler:innen</span>
-        </div>
-      </div>
-      <div class="image-slot image-slot--16x10">
-        <div class="image-slot__placeholder">
-          <span class="image-slot__icon">⚙</span>
-          <span class="image-slot__label">Konfigurations-Seite</span>
-          <span class="image-slot__desc">Screenshot der telli-Konfiguration mit dem System-Prompt</span>
-        </div>
-      </div>
+    <!-- BILD · Slide 7 — folie7.png -->
+    <div class="image-slot image-slot--16x9" style="margin: 28px auto 0; max-width: 880px;">
+      <img class="image-slot__img" src="folie7.png" alt="Telli-Lernszenario">
     </div>
   </div>
 </section>
